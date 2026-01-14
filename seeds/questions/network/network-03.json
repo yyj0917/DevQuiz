@@ -1,0 +1,142 @@
+[
+  {
+    "category": "network",
+    "type": "multiple",
+    "difficulty": 1,
+    "question": "TCP와 UDP의 차이점으로 올바른 것은?",
+    "options": [
+      "TCP는 비연결형, UDP는 연결형 프로토콜이다",
+      "TCP는 신뢰성 있는 전송을 보장하고, UDP는 보장하지 않는다",
+      "UDP가 TCP보다 느리다",
+      "TCP는 브로드캐스트가 가능하고, UDP는 불가능하다"
+    ],
+    "answer": "1",
+    "explanation": "TCP는 연결 지향으로 3-way handshake로 연결을 설정하고, 순서 보장, 오류 복구, 흐름 제어를 제공합니다. UDP는 비연결형으로 이런 기능 없이 빠르게 전송합니다. UDP가 오버헤드가 적어 더 빠르며, 브로드캐스트/멀티캐스트가 가능합니다. 실시간 스트리밍, 게임, DNS 등에서 UDP를 사용합니다.",
+    "tags": ["TCP", "UDP", "비교"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "TCP 3-way handshake의 순서로 올바른 것은?",
+    "options": [
+      "SYN → ACK → SYN-ACK",
+      "SYN → SYN-ACK → ACK",
+      "ACK → SYN → SYN-ACK",
+      "SYN-ACK → SYN → ACK"
+    ],
+    "answer": "1",
+    "explanation": "TCP 연결 설정: (1) 클라이언트가 SYN 전송 (2) 서버가 SYN-ACK 응답 (3) 클라이언트가 ACK 전송. 이 과정에서 양쪽의 시퀀스 번호가 교환되고 연결이 수립됩니다. SYN은 연결 요청, ACK는 확인 응답입니다. 이후 데이터 전송이 시작되며, 종료는 4-way handshake를 사용합니다.",
+    "tags": ["TCP", "3-way handshake", "연결설정"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "TCP 4-way handshake(연결 종료)에서 TIME_WAIT 상태가 필요한 이유는?",
+    "options": [
+      "서버의 리소스를 절약하기 위해",
+      "지연된 패킷이 새 연결에 영향을 주지 않도록 하고, 마지막 ACK 손실에 대비하기 위해",
+      "데이터 전송 속도를 높이기 위해",
+      "암호화 키를 안전하게 폐기하기 위해"
+    ],
+    "answer": "1",
+    "explanation": "TIME_WAIT는 연결 종료를 먼저 요청한 쪽에서 일정 시간(보통 2MSL) 대기하는 상태입니다. (1) 마지막 ACK가 손실되면 상대방이 FIN을 재전송하는데, 이를 처리할 수 있습니다. (2) 네트워크에 남아있는 지연 패킷이 같은 포트의 새 연결에 혼입되는 것을 방지합니다.",
+    "tags": ["TCP", "4-way handshake", "TIME_WAIT"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "TCP의 흐름 제어(Flow Control)에 사용되는 메커니즘은?",
+    "options": [
+      "TTL (Time To Live)",
+      "슬라이딩 윈도우 (Sliding Window)",
+      "체크섬 (Checksum)",
+      "포트 포워딩 (Port Forwarding)"
+    ],
+    "answer": "1",
+    "explanation": "슬라이딩 윈도우는 수신자가 처리할 수 있는 데이터 양(윈도우 크기)을 송신자에게 알려, 수신자의 버퍼가 넘치지 않도록 조절합니다. 수신자는 ACK와 함께 윈도우 크기를 알리고, 송신자는 해당 크기만큼만 전송합니다. 혼잡 제어(Congestion Control)는 네트워크 상태에 따른 조절로, 흐름 제어와 구분됩니다.",
+    "tags": ["TCP", "흐름제어", "슬라이딩윈도우"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "multiple",
+    "difficulty": 3,
+    "question": "TCP의 혼잡 제어(Congestion Control) 알고리즘에서 Slow Start에 대한 설명으로 올바른 것은?",
+    "options": [
+      "항상 일정한 속도로 데이터를 전송한다",
+      "연결 초기에 윈도우 크기를 지수적으로 증가시키다가 임계점에서 선형 증가로 전환한다",
+      "패킷 손실 시에만 동작한다",
+      "UDP에서 사용되는 알고리즘이다"
+    ],
+    "answer": "1",
+    "explanation": "Slow Start는 연결 초기에 혼잡 윈도우(cwnd)를 1에서 시작해 ACK를 받을 때마다 2배로 증가시킵니다(지수적 증가). 임계점(ssthresh)에 도달하면 혼잡 회피(Congestion Avoidance) 단계로 전환되어 선형적으로 증가합니다. 패킷 손실 시 cwnd를 줄이고 다시 시작합니다. 네트워크 혼잡을 피하면서 대역폭을 효율적으로 사용합니다.",
+    "tags": ["TCP", "혼잡제어", "SlowStart"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "multiple",
+    "difficulty": 3,
+    "question": "다음 중 UDP를 사용하는 것이 TCP보다 적합한 경우는?",
+    "options": [
+      "파일 전송(FTP)",
+      "이메일 전송(SMTP)",
+      "실시간 화상 회의",
+      "웹 페이지 로딩(HTTP)"
+    ],
+    "answer": "2",
+    "explanation": "실시간 화상 회의는 지연이 최소화되어야 하고, 일부 패킷 손실이 있어도 계속 재생하는 것이 낫습니다. UDP는 오버헤드가 적고 빠르며, 재전송 대기 없이 다음 데이터를 보낼 수 있습니다. 파일, 이메일, 웹은 데이터 무결성이 중요하여 TCP를 사용합니다. VoIP, 온라인 게임, DNS 쿼리도 UDP를 주로 사용합니다.",
+    "tags": ["UDP", "실시간", "적합한사용"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "ox",
+    "difficulty": 1,
+    "question": "UDP는 데이터 전송 순서를 보장하지 않는다.",
+    "options": null,
+    "answer": "true",
+    "explanation": "맞습니다. UDP는 각 데이터그램이 독립적으로 전송되어 도착 순서가 보장되지 않습니다. 또한 손실되어도 재전송하지 않습니다. 애플리케이션 레벨에서 필요하면 순서 번호를 추가하거나, 재전송 로직을 구현해야 합니다. TCP는 시퀀스 번호로 순서를 보장하고 누락된 세그먼트를 재전송합니다.",
+    "tags": ["UDP", "순서보장", "특징"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "ox",
+    "difficulty": 2,
+    "question": "TCP는 연결 설정에 3-way handshake를, 연결 종료에 4-way handshake를 사용한다.",
+    "options": null,
+    "answer": "true",
+    "explanation": "맞습니다. 연결 설정: SYN → SYN-ACK → ACK (3단계). 연결 종료: FIN → ACK → FIN → ACK (4단계). 종료가 4단계인 이유는 양쪽이 각자 종료 의사를 전달해야 하고, 한쪽이 종료해도 다른 쪽은 아직 보낼 데이터가 있을 수 있기 때문입니다(Half-Close).",
+    "tags": ["TCP", "handshake", "연결종료"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "ox",
+    "difficulty": 2,
+    "question": "TCP 헤더에는 체크섬(Checksum)이 포함되어 있지만, UDP 헤더에는 포함되지 않는다.",
+    "options": null,
+    "answer": "false",
+    "explanation": "틀렸습니다. TCP와 UDP 모두 헤더에 체크섬 필드가 있습니다. 체크섬은 전송 중 데이터 손상을 감지합니다. UDP의 체크섬은 IPv4에서 선택적이었으나, IPv6에서는 필수입니다. TCP의 체크섬은 항상 필수입니다. 다만 체크섬은 오류 검출만 하고 정정은 하지 않습니다.",
+    "tags": ["TCP", "UDP", "체크섬"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "blank",
+    "difficulty": 1,
+    "question": "TCP는 _____형 프로토콜이고, UDP는 비연결형 프로토콜이다.",
+    "options": null,
+    "answer": "연결",
+    "explanation": "TCP는 연결 지향(Connection-Oriented) 프로토콜로, 데이터 전송 전 3-way handshake로 연결을 설정합니다. 연결이 수립되면 양방향 통신이 가능하고, 종료 시 4-way handshake를 수행합니다. UDP는 비연결형(Connectionless)으로 사전 연결 없이 바로 데이터를 전송합니다.",
+    "tags": ["TCP", "연결지향", "비연결형"],
+    "source": null
+  }
+]

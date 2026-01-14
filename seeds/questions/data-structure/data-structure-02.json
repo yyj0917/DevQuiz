@@ -1,0 +1,142 @@
+[
+  {
+    "category": "data-structure",
+    "type": "multiple",
+    "difficulty": 1,
+    "question": "스택(Stack)의 특징으로 올바른 것은?",
+    "options": [
+      "먼저 들어온 데이터가 먼저 나간다 (FIFO)",
+      "나중에 들어온 데이터가 먼저 나간다 (LIFO)",
+      "우선순위가 높은 데이터가 먼저 나간다",
+      "임의의 위치에서 데이터를 꺼낼 수 있다"
+    ],
+    "answer": "1",
+    "explanation": "스택은 LIFO(Last In First Out) 구조로, 가장 나중에 삽입된 요소가 가장 먼저 제거됩니다. 접시를 쌓아올리는 것과 같습니다. push(삽입), pop(제거), peek/top(확인) 연산을 제공합니다. 함수 호출 스택, 브라우저 뒤로 가기, undo 기능, 괄호 매칭 등에 활용됩니다.",
+    "tags": ["스택", "LIFO", "기본개념"],
+    "source": null
+  },
+  {
+    "category": "data-structure",
+    "type": "multiple",
+    "difficulty": 1,
+    "question": "큐(Queue)의 특징으로 올바른 것은?",
+    "options": [
+      "나중에 들어온 데이터가 먼저 나간다 (LIFO)",
+      "먼저 들어온 데이터가 먼저 나간다 (FIFO)",
+      "양쪽 끝에서 삽입과 삭제가 모두 가능하다",
+      "중간에 있는 요소를 직접 제거할 수 있다"
+    ],
+    "answer": "1",
+    "explanation": "큐는 FIFO(First In First Out) 구조로, 먼저 들어온 요소가 먼저 나갑니다. 줄을 서서 기다리는 것과 같습니다. enqueue(삽입), dequeue(제거), front/peek(확인) 연산을 제공합니다. 작업 스케줄링, BFS 탐색, 프린터 대기열, 메시지 큐 등에 활용됩니다.",
+    "tags": ["큐", "FIFO", "기본개념"],
+    "source": null
+  },
+  {
+    "category": "data-structure",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "스택 두 개를 사용하여 큐를 구현할 때, n개의 요소에 대한 enqueue와 dequeue 연산의 시간복잡도로 올바른 것은?",
+    "options": [
+      "enqueue O(1), dequeue O(1)",
+      "enqueue O(n), dequeue O(n)",
+      "enqueue O(1), dequeue 평균(Amortized) O(1)",
+      "enqueue O(n), dequeue O(1)"
+    ],
+    "answer": "2",
+    "explanation": "스택 2개로 큐 구현: inbox에 push로 enqueue(O(1)), dequeue 시 outbox가 비었으면 inbox의 모든 요소를 outbox로 옮기고(O(n)) pop합니다. 각 요소는 최대 2번 이동하므로 n개 연산 시 총 O(n), 평균 O(1)입니다. 이를 분할 상환 분석이라 합니다. 면접 단골 문제입니다.",
+    "tags": ["스택", "큐구현", "Amortized"],
+    "source": null
+  },
+  {
+    "category": "data-structure",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "원형 큐(Circular Queue)를 사용하는 주된 이유는?",
+    "options": [
+      "LIFO 연산을 지원하기 위해",
+      "선형 큐에서 발생하는 메모리 낭비 문제를 해결하기 위해",
+      "우선순위 기반 처리를 위해",
+      "양방향 탐색을 지원하기 위해"
+    ],
+    "answer": "1",
+    "explanation": "선형 큐는 dequeue 시 front가 앞으로 이동하면서 앞쪽 공간이 비어도 재사용할 수 없어 메모리가 낭비됩니다. 원형 큐는 rear가 끝에 도달하면 다시 처음으로 돌아가 빈 공간을 활용합니다. (rear + 1) % size로 인덱스를 순환시킵니다. 고정 크기 버퍼, 운영체제 스케줄링에 많이 사용됩니다.",
+    "tags": ["원형큐", "메모리효율", "순환구조"],
+    "source": null
+  },
+  {
+    "category": "data-structure",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "덱(Deque, Double-Ended Queue)에 대한 설명으로 올바른 것은?",
+    "options": [
+      "한쪽 끝에서만 삽입과 삭제가 가능하다",
+      "양쪽 끝에서 삽입과 삭제가 모두 가능하다",
+      "중간 요소에 O(1)로 접근할 수 있다",
+      "우선순위에 따라 요소가 정렬된다"
+    ],
+    "answer": "1",
+    "explanation": "덱(Deque)은 양쪽 끝에서 삽입(push_front, push_back)과 삭제(pop_front, pop_back)가 모두 O(1)로 가능한 자료구조입니다. 스택과 큐의 기능을 모두 포함합니다. 슬라이딩 윈도우 알고리즘, 팰린드롬 검사, 작업 스케줄링 등에 활용됩니다. Java의 ArrayDeque, Python의 collections.deque가 대표적입니다.",
+    "tags": ["덱", "양방향큐", "삽입삭제"],
+    "source": null
+  },
+  {
+    "category": "data-structure",
+    "type": "multiple",
+    "difficulty": 3,
+    "question": "다음 중 스택을 활용하여 해결하기에 가장 적합한 문제는?",
+    "options": [
+      "프린터 작업 순서 관리",
+      "너비 우선 탐색(BFS)",
+      "수식의 괄호 유효성 검사",
+      "최단 경로 찾기"
+    ],
+    "answer": "2",
+    "explanation": "괄호 유효성 검사는 스택의 대표적 활용 사례입니다. 여는 괄호를 push하고 닫는 괄호가 나오면 pop하여 매칭을 확인합니다. 프린터 작업과 BFS는 큐를 사용하고, 최단 경로는 BFS나 다익스트라를 사용합니다. 스택은 DFS, 후위 표기법 계산, 재귀 호출 관리 등에도 활용됩니다.",
+    "tags": ["스택활용", "괄호매칭", "문제해결"],
+    "source": null
+  },
+  {
+    "category": "data-structure",
+    "type": "ox",
+    "difficulty": 1,
+    "question": "스택의 push, pop, peek 연산은 모두 O(1) 시간복잡도를 갖는다.",
+    "options": null,
+    "answer": "true",
+    "explanation": "맞습니다. 스택은 항상 top에서만 연산이 이루어지므로 push(top에 추가), pop(top 제거), peek(top 확인) 모두 O(1)입니다. 배열 기반이든 연결 리스트 기반이든 동일합니다. 이 효율성 때문에 스택은 함수 호출 관리, 수식 계산 등 다양한 곳에서 사용됩니다.",
+    "tags": ["스택", "시간복잡도", "기본연산"],
+    "source": null
+  },
+  {
+    "category": "data-structure",
+    "type": "ox",
+    "difficulty": 2,
+    "question": "큐를 연결 리스트로 구현할 때, head와 tail 포인터를 모두 유지하면 enqueue와 dequeue 모두 O(1)에 수행할 수 있다.",
+    "options": null,
+    "answer": "true",
+    "explanation": "맞습니다. head 포인터로 dequeue(앞에서 제거)를 O(1)에, tail 포인터로 enqueue(뒤에 추가)를 O(1)에 수행할 수 있습니다. 배열 기반 큐는 고정 크기 문제가 있지만, 연결 리스트 기반은 동적 크기가 가능합니다. 단, 메모리 오버헤드(포인터 저장)가 있습니다.",
+    "tags": ["큐", "연결리스트", "구현"],
+    "source": null
+  },
+  {
+    "category": "data-structure",
+    "type": "ox",
+    "difficulty": 2,
+    "question": "재귀 함수는 내부적으로 스택을 사용하므로, 모든 재귀 알고리즘은 스택을 이용한 반복문으로 변환할 수 있다.",
+    "options": null,
+    "answer": "true",
+    "explanation": "맞습니다. 함수 호출 시 콜 스택에 반환 주소, 지역 변수 등이 저장됩니다. 재귀는 이 콜 스택을 암묵적으로 사용하는 것이고, 명시적 스택을 사용하면 반복문으로 변환할 수 있습니다. 재귀 깊이가 깊으면 스택 오버플로우가 발생할 수 있어, 반복문 변환이 필요한 경우도 있습니다.",
+    "tags": ["재귀", "스택", "콜스택"],
+    "source": null
+  },
+  {
+    "category": "data-structure",
+    "type": "blank",
+    "difficulty": 1,
+    "question": "스택에서 가장 위에 있는 요소를 제거하지 않고 확인만 하는 연산을 _____이라고 한다.",
+    "options": null,
+    "answer": "peek",
+    "explanation": "peek(또는 top) 연산은 스택의 최상단 요소를 제거하지 않고 값만 반환합니다. pop은 제거 후 반환, push는 삽입입니다. 큐에서도 front를 확인하는 연산을 peek이라 부르기도 합니다. 스택이 비어있을 때 peek을 호출하면 에러나 예외가 발생합니다.",
+    "tags": ["스택", "peek", "기본연산"],
+    "source": null
+  }
+]

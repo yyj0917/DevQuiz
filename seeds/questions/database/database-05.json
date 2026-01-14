@@ -1,0 +1,156 @@
+[
+  {
+    "category": "database",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "윈도우 함수(Window Function)의 특징으로 올바른 것은?",
+    "options": [
+      "GROUP BY처럼 행을 그룹화하여 하나의 행으로 축소한다",
+      "각 행에 대해 계산하면서도 원본 행을 유지한다",
+      "반드시 ORDER BY 절이 필요하다",
+      "집계 함수와 함께 사용할 수 없다"
+    ],
+    "answer": "1",
+    "explanation": "윈도우 함수는 GROUP BY와 달리 행을 축소하지 않고 각 행을 유지하면서 연산을 수행합니다. OVER 절로 윈도우를 정의하며, ORDER BY는 순위 함수 등에서는 필요하지만 필수는 아닙니다. SUM, AVG 같은 집계 함수도 윈도우 함수로 사용 가능합니다.",
+    "tags": ["윈도우함수", "OVER", "분석함수"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "code",
+    "difficulty": 2,
+    "question": "다음 SQL의 실행 결과에서 rank_col의 값으로 가능한 것은?",
+    "code_snippet": "SELECT name, score,\n  RANK() OVER (ORDER BY score DESC) as rank_col\nFROM students;\n\n-- 데이터: A-90, B-85, C-85, D-80",
+    "options": [
+      "1, 2, 3, 4",
+      "1, 2, 2, 3",
+      "1, 2, 2, 4",
+      "1, 2, 3, 3"
+    ],
+    "answer": "2",
+    "explanation": "RANK()는 동점인 경우 같은 순위를 부여하고 다음 순위를 건너뜁니다. 점수 90(1위), 85(공동 2위), 85(공동 2위), 80(4위)가 됩니다. DENSE_RANK()를 사용하면 1, 2, 2, 3이 됩니다. ROW_NUMBER()는 동점이어도 순차적으로 1, 2, 3, 4를 부여합니다.",
+    "tags": ["RANK", "윈도우함수", "순위함수"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "RANK(), DENSE_RANK(), ROW_NUMBER()의 차이점으로 올바른 것은?",
+    "options": [
+      "ROW_NUMBER()만 ORDER BY가 필요하다",
+      "DENSE_RANK()는 동점 시 순위를 건너뛴다",
+      "RANK()는 동점 시 같은 순위 후 다음 순위를 건너뛴다",
+      "세 함수 모두 동점 시 같은 결과를 반환한다"
+    ],
+    "answer": "2",
+    "explanation": "동점(85, 85)일 때: RANK()는 2, 2, 4 (건너뜀), DENSE_RANK()는 2, 2, 3 (건너뛰지 않음), ROW_NUMBER()는 2, 3 (동점 없이 순차). 모두 ORDER BY가 필요하며, 목적에 따라 적절한 함수를 선택해야 합니다.",
+    "tags": ["RANK", "DENSE_RANK", "ROW_NUMBER"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "code",
+    "difficulty": 3,
+    "question": "다음 SQL의 결과로 올바른 것은?",
+    "code_snippet": "SELECT department, name, salary,\n  SUM(salary) OVER (PARTITION BY department ORDER BY salary\n    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as running_total\nFROM employees\nWHERE department = 'IT'\nORDER BY salary;\n\n-- IT 부서 급여: 3000, 4000, 5000",
+    "options": [
+      "3000, 7000, 12000",
+      "3000, 4000, 5000",
+      "12000, 12000, 12000",
+      "3000, 3500, 4000"
+    ],
+    "answer": "0",
+    "explanation": "ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW는 처음부터 현재 행까지의 누적합을 계산합니다(Running Total). 첫 행: 3000, 둘째 행: 3000+4000=7000, 셋째 행: 3000+4000+5000=12000. 이는 누적 매출, 누적 합계 등에 자주 사용됩니다.",
+    "tags": ["윈도우함수", "누적합", "ROWS BETWEEN"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "ox",
+    "difficulty": 1,
+    "question": "LAG() 함수는 현재 행의 이전 행 값을 가져오고, LEAD() 함수는 현재 행의 다음 행 값을 가져온다.",
+    "options": null,
+    "answer": "true",
+    "explanation": "LAG(column, n)은 현재 행에서 n행 이전 값을, LEAD(column, n)은 n행 이후 값을 가져옵니다. 기본값 n=1입니다. 전월 대비 증감, 이전 값과의 비교 등에 유용합니다. 이전/다음 값이 없으면 NULL을 반환하며, 세 번째 인자로 기본값을 지정할 수 있습니다.",
+    "tags": ["LAG", "LEAD", "윈도우함수"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "code",
+    "difficulty": 3,
+    "question": "다음 SQL의 실행 결과는?",
+    "code_snippet": "SELECT NVL(NULL, NVL(NULL, 'C'));",
+    "options": [
+      "NULL",
+      "C",
+      "에러 발생",
+      "빈 문자열"
+    ],
+    "answer": "1",
+    "explanation": "NVL(expr1, expr2)는 expr1이 NULL이면 expr2를 반환합니다. 내부 NVL(NULL, 'C')가 먼저 실행되어 'C'를 반환하고, 외부 NVL(NULL, 'C')에서 첫 번째 인자가 NULL이므로 두 번째 인자 'C'를 반환합니다. Oracle에서 사용하며, 표준 SQL에서는 COALESCE를 사용합니다.",
+    "tags": ["NVL", "NULL처리", "Oracle"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "다음 중 NULLIF 함수의 동작으로 올바른 것은?",
+    "options": [
+      "두 값이 같으면 첫 번째 값 반환",
+      "두 값이 같으면 NULL 반환",
+      "두 값이 다르면 NULL 반환",
+      "NULL을 다른 값으로 치환"
+    ],
+    "answer": "1",
+    "explanation": "NULLIF(expr1, expr2)는 두 값이 같으면 NULL을, 다르면 첫 번째 값을 반환합니다. 예: NULLIF(10, 10) → NULL, NULLIF(10, 20) → 10. 0으로 나누기 에러 방지에 유용합니다: value / NULLIF(divisor, 0)은 divisor가 0이면 NULL을 반환하여 에러를 방지합니다.",
+    "tags": ["NULLIF", "NULL처리", "SQL함수"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "code",
+    "difficulty": 3,
+    "question": "다음 SQL의 실행 결과로 올바른 것은?",
+    "code_snippet": "SELECT FIRST_VALUE(name) OVER (ORDER BY hire_date) as first_emp,\n       LAST_VALUE(name) OVER (ORDER BY hire_date) as last_emp\nFROM employees;\n\n-- 입사일순: Alice(1월), Bob(2월), Charlie(3월)",
+    "options": [
+      "모든 행에서 Alice, Charlie",
+      "모든 행에서 Alice, (각 행의 자기 자신)",
+      "각각 해당 행의 이름",
+      "에러 발생"
+    ],
+    "answer": "1",
+    "explanation": "LAST_VALUE의 기본 윈도우 프레임은 RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW이므로 현재 행까지만 포함합니다. 따라서 LAST_VALUE는 각 행에서 자기 자신을 반환합니다. 전체 마지막 값을 얻으려면 ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING을 명시해야 합니다.",
+    "tags": ["FIRST_VALUE", "LAST_VALUE", "윈도우프레임"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "ox",
+    "difficulty": 2,
+    "question": "GROUP BY 절에 명시되지 않은 컬럼은 SELECT 절에서 집계 함수 없이 사용할 수 없다.",
+    "options": null,
+    "answer": "true",
+    "explanation": "GROUP BY로 그룹화하면 각 그룹당 하나의 결과 행만 반환되므로, SELECT에 사용하는 컬럼은 GROUP BY에 포함되거나 집계 함수(SUM, COUNT, AVG 등)로 감싸야 합니다. 그렇지 않으면 어떤 값을 반환해야 할지 모호해지므로 대부분의 DBMS에서 에러가 발생합니다.",
+    "tags": ["GROUP BY", "집계함수", "SQL문법"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "multiple",
+    "difficulty": 3,
+    "question": "PIVOT과 UNPIVOT의 역할로 올바른 것은?",
+    "options": [
+      "PIVOT: 행을 열로 변환, UNPIVOT: 열을 행으로 변환",
+      "PIVOT: 열을 행으로 변환, UNPIVOT: 행을 열로 변환",
+      "PIVOT: 데이터 정렬, UNPIVOT: 데이터 역정렬",
+      "PIVOT: 중복 제거, UNPIVOT: 중복 허용"
+    ],
+    "answer": "0",
+    "explanation": "PIVOT은 행 데이터를 열로 전환하여 크로스탭 형태로 만듭니다(월별 데이터를 컬럼으로). UNPIVOT은 반대로 열 데이터를 행으로 전환합니다. 보고서 생성이나 데이터 재구조화에 사용됩니다. 모든 DBMS가 지원하지는 않으며, CASE문으로 유사하게 구현할 수 있습니다.",
+    "tags": ["PIVOT", "UNPIVOT", "데이터변환"],
+    "source": null
+  }
+]

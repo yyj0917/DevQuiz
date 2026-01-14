@@ -1,0 +1,142 @@
+[
+  {
+    "category": "network",
+    "type": "multiple",
+    "difficulty": 1,
+    "question": "RESTful API의 특징으로 올바른 것은?",
+    "options": [
+      "상태를 서버에 저장하여 관리한다",
+      "HTTP 메서드(GET, POST, PUT, DELETE)를 사용하여 리소스를 조작한다",
+      "항상 XML 형식으로 데이터를 전송한다",
+      "WebSocket을 기반으로 동작한다"
+    ],
+    "answer": "1",
+    "explanation": "REST(Representational State Transfer)는 HTTP 메서드로 리소스를 조작합니다: GET(조회), POST(생성), PUT(수정), DELETE(삭제). Stateless하여 각 요청이 독립적입니다. JSON이 주로 사용되지만 XML도 가능합니다. URI로 리소스를 식별하고, 표준 HTTP를 활용하여 별도 프로토콜이 필요 없습니다.",
+    "tags": ["REST", "API", "HTTP메서드"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "CORS(Cross-Origin Resource Sharing)가 필요한 이유는?",
+    "options": [
+      "서버의 성능을 향상시키기 위해",
+      "브라우저의 동일 출처 정책(Same-Origin Policy)으로 인해 다른 출처의 리소스 접근이 차단되기 때문",
+      "HTTPS 인증서를 검증하기 위해",
+      "쿠키를 암호화하기 위해"
+    ],
+    "answer": "1",
+    "explanation": "브라우저는 보안을 위해 동일 출처 정책(SOP)으로 다른 출처(도메인, 포트, 프로토콜)의 리소스 접근을 차단합니다. CORS는 서버가 허용하는 출처를 명시하여 이 제한을 완화합니다. 서버가 Access-Control-Allow-Origin 헤더로 허용 출처를 응답하면 브라우저가 접근을 허용합니다. 서버 간 통신에는 적용되지 않습니다.",
+    "tags": ["CORS", "SOP", "동일출처정책"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "CORS Preflight 요청에 대한 설명으로 올바른 것은?",
+    "options": [
+      "모든 CORS 요청에서 발생한다",
+      "단순 요청이 아닌 경우 실제 요청 전에 OPTIONS 메서드로 서버에 허용 여부를 확인한다",
+      "서버가 클라이언트에게 먼저 보내는 요청이다",
+      "인증 토큰을 검증하는 요청이다"
+    ],
+    "answer": "1",
+    "explanation": "Preflight는 브라우저가 실제 요청 전에 OPTIONS 요청으로 서버가 해당 요청을 허용하는지 확인하는 과정입니다. Content-Type이 특수하거나, 커스텀 헤더가 있거나, PUT/DELETE 등의 메서드 사용 시 발생합니다. 단순 요청(Simple Request: GET/POST, 일반 헤더)은 Preflight 없이 바로 전송됩니다.",
+    "tags": ["CORS", "Preflight", "OPTIONS"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "WebSocket의 특징으로 올바른 것은?",
+    "options": [
+      "요청-응답 방식으로만 통신한다",
+      "연결 후 클라이언트와 서버 간 양방향 실시간 통신이 가능하다",
+      "HTTP보다 연결 설정이 복잡하여 느리다",
+      "REST API의 일종이다"
+    ],
+    "answer": "1",
+    "explanation": "WebSocket은 HTTP로 핸드셰이크 후 TCP 연결을 업그레이드하여 지속적인 양방향 통신을 제공합니다. 서버도 클라이언트에게 능동적으로 데이터를 푸시할 수 있습니다. 실시간 채팅, 게임, 주식 시세 등에 적합합니다. 폴링/롱 폴링보다 오버헤드가 적고 지연이 낮습니다. ws://(80) 또는 wss://(443, 보안) 프로토콜을 사용합니다.",
+    "tags": ["WebSocket", "양방향통신", "실시간"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "multiple",
+    "difficulty": 3,
+    "question": "REST API 설계 원칙 중 HATEOAS(Hypermedia As The Engine Of Application State)의 의미는?",
+    "options": [
+      "응답 데이터를 항상 압축해야 한다",
+      "응답에 관련 리소스의 링크를 포함하여 클라이언트가 동적으로 탐색할 수 있게 한다",
+      "모든 요청에 인증 토큰을 포함해야 한다",
+      "서버가 세션 상태를 유지해야 한다"
+    ],
+    "answer": "1",
+    "explanation": "HATEOAS는 응답에 다음 가능한 액션의 하이퍼링크를 포함하여 클라이언트가 API 구조를 하드코딩하지 않고 동적으로 탐색할 수 있게 합니다. 예: 주문 조회 응답에 '취소 링크', '결제 링크'를 포함. Richardson Maturity Model의 Level 3에 해당하며, 완전한 REST를 달성하는 요소입니다. 실무에서는 복잡성 때문에 생략되기도 합니다.",
+    "tags": ["REST", "HATEOAS", "API설계"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "multiple",
+    "difficulty": 3,
+    "question": "Server-Sent Events(SSE)와 WebSocket의 차이점으로 올바른 것은?",
+    "options": [
+      "SSE는 양방향, WebSocket은 단방향 통신이다",
+      "SSE는 서버→클라이언트 단방향 스트리밍이고, WebSocket은 양방향 통신이다",
+      "SSE가 WebSocket보다 구현이 복잡하다",
+      "SSE는 바이너리 데이터, WebSocket은 텍스트 데이터만 전송한다"
+    ],
+    "answer": "1",
+    "explanation": "SSE는 HTTP 기반으로 서버가 클라이언트에게 이벤트를 단방향으로 스트리밍합니다. 구현이 간단하고 자동 재연결을 지원합니다. WebSocket은 양방향 통신이 가능하지만 프로토콜이 다르고 구현이 복잡합니다. 알림, 실시간 피드 등 서버→클라이언트만 필요한 경우 SSE가 적합합니다. WebSocket은 텍스트와 바이너리 모두 전송 가능합니다.",
+    "tags": ["SSE", "WebSocket", "비교", "실시간"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "ox",
+    "difficulty": 1,
+    "question": "REST API에서 리소스는 URI(Uniform Resource Identifier)로 식별된다.",
+    "options": null,
+    "answer": "true",
+    "explanation": "맞습니다. REST에서 리소스는 고유한 URI로 식별됩니다. 예: /users/123은 ID가 123인 사용자 리소스를 나타냅니다. URI는 명사로 표현하고(동사 X), 복수형을 사용하며(/users), 계층 구조를 반영합니다(/users/123/orders). HTTP 메서드가 행위를 나타내므로 URI에 동사를 넣지 않습니다.",
+    "tags": ["REST", "URI", "리소스"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "ox",
+    "difficulty": 2,
+    "question": "CORS에서 Access-Control-Allow-Origin: *로 설정하면 모든 출처에서의 요청을 허용하지만, 자격 증명(쿠키 등)이 포함된 요청은 허용되지 않는다.",
+    "options": null,
+    "answer": "true",
+    "explanation": "맞습니다. 와일드카드(*)는 모든 출처를 허용하지만, credentials(쿠키, HTTP 인증)가 포함된 요청에는 사용할 수 없습니다. 자격 증명 요청을 허용하려면 구체적인 출처를 명시하고 Access-Control-Allow-Credentials: true도 설정해야 합니다. 이는 보안을 위한 브라우저의 제한입니다.",
+    "tags": ["CORS", "와일드카드", "자격증명"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "ox",
+    "difficulty": 2,
+    "question": "WebSocket 연결은 HTTP 요청으로 시작하여 프로토콜 업그레이드를 통해 수립된다.",
+    "options": null,
+    "answer": "true",
+    "explanation": "맞습니다. WebSocket은 HTTP 핸드셰이크로 시작합니다. 클라이언트가 Upgrade: websocket 헤더와 함께 HTTP 요청을 보내고, 서버가 101 Switching Protocols로 응답하면 TCP 연결이 WebSocket으로 업그레이드됩니다. 이후 HTTP가 아닌 WebSocket 프레임으로 양방향 통신합니다. 포트 80/443을 공유할 수 있어 방화벽 통과가 용이합니다.",
+    "tags": ["WebSocket", "HTTP업그레이드", "핸드셰이크"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "blank",
+    "difficulty": 1,
+    "question": "REST API에서 새로운 리소스를 생성할 때 주로 사용하는 HTTP 메서드는 _____이다.",
+    "options": null,
+    "answer": "POST",
+    "explanation": "POST는 새 리소스를 생성하는 데 사용됩니다. 예: POST /users로 새 사용자 생성. 응답으로 201 Created와 생성된 리소스의 URI를 반환합니다. GET은 조회, PUT은 전체 수정(또는 생성), PATCH는 부분 수정, DELETE는 삭제에 사용됩니다. POST는 멱등성이 없어 같은 요청을 반복하면 여러 리소스가 생성될 수 있습니다.",
+    "tags": ["REST", "POST", "리소스생성"],
+    "source": null
+  }
+]

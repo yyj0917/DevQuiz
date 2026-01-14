@@ -24,6 +24,33 @@
 - `src/hooks/` - custom hooks
 - `src/constants/` - 상수
 
+```
+/app
+  /(auth)/login
+  /(pages)
+    /onboarding  
+    /quiz
+    /result
+    /wrong-notes
+    /stats
+    /settings
+    /(admin)
+/components
+  /ui (shadcn)
+  /quiz
+  /layout
+/lib
+  /supabase
+  /quiz
+  /utils
+/hooks
+/types
+/supabase
+  /migrations
+/scripts
+/seeds
+  /questions
+```
 ## 코딩 컨벤션
 - 컴포넌트: PascalCase
 - 함수/변수: camelCase
@@ -42,3 +69,4 @@
 
 ## 참고 문서
 - Supabase 작업 시 `SUPABASE_RULES.md` 참고
+- Please refer to the Product Requirements Document for detailed specifications:`PRD.md`

@@ -1,0 +1,156 @@
+[
+  {
+    "category": "database",
+    "type": "code",
+    "difficulty": 2,
+    "question": "다음 SQL의 실행 결과로 올바른 것은?",
+    "code_snippet": "-- employees 테이블: id, name, dept_id\n-- departments 테이블: id, dept_name\n\nSELECT e.name, d.dept_name\nFROM employees e\nLEFT JOIN departments d ON e.dept_id = d.id;",
+    "options": [
+      "부서가 있는 직원만 조회",
+      "모든 직원과 매칭되는 부서 조회 (부서 없으면 NULL)",
+      "모든 부서와 매칭되는 직원 조회",
+      "양쪽 테이블의 모든 데이터 조회"
+    ],
+    "answer": "1",
+    "explanation": "LEFT JOIN은 왼쪽 테이블(employees)의 모든 행을 반환하고, 오른쪽 테이블(departments)에서 매칭되는 행이 없으면 NULL을 반환합니다. 부서가 배정되지 않은 직원도 조회되며, 해당 직원의 dept_name은 NULL로 표시됩니다.",
+    "tags": ["LEFT JOIN", "OUTER JOIN", "SQL"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "다음 중 집합 연산자의 특징으로 올바르지 않은 것은?",
+    "options": [
+      "UNION은 중복을 제거한다",
+      "UNION ALL은 중복을 포함한다",
+      "INTERSECT는 교집합을 반환한다",
+      "EXCEPT는 양쪽에 없는 데이터를 반환한다"
+    ],
+    "answer": "3",
+    "explanation": "EXCEPT(또는 MINUS)는 첫 번째 쿼리 결과에서 두 번째 쿼리 결과를 제외한 차집합을 반환합니다. '양쪽에 없는 데이터'가 아니라 '첫 번째에만 있는 데이터'입니다. UNION은 합집합(중복 제거), UNION ALL은 합집합(중복 포함), INTERSECT는 교집합입니다.",
+    "tags": ["UNION", "INTERSECT", "EXCEPT", "집합연산자"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "code",
+    "difficulty": 2,
+    "question": "다음 SQL의 실행 결과로 올바른 것은?",
+    "code_snippet": "SELECT * FROM products\nWHERE price > ALL (\n  SELECT price FROM products WHERE category = 'Electronics'\n);",
+    "options": [
+      "전자제품 중 하나보다 비싼 상품",
+      "전자제품 모두보다 비싼 상품",
+      "전자제품의 평균가보다 비싼 상품",
+      "전자제품과 가격이 같은 상품"
+    ],
+    "answer": "1",
+    "explanation": "ALL 연산자는 서브쿼리의 모든 값과 비교합니다. price > ALL(...)은 서브쿼리 결과의 모든 가격보다 큰 경우에만 TRUE입니다. 즉, 전자제품 중 가장 비싼 가격보다도 비싼 상품만 조회됩니다. ANY(SOME)는 하나 이상과 조건을 만족하면 TRUE입니다.",
+    "tags": ["ALL", "서브쿼리", "비교연산자"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "multiple",
+    "difficulty": 1,
+    "question": "다음 중 상관 서브쿼리(Correlated Subquery)의 특징은?",
+    "options": [
+      "메인 쿼리와 독립적으로 한 번만 실행",
+      "메인 쿼리의 각 행마다 반복 실행",
+      "항상 단일 값만 반환",
+      "FROM 절에서만 사용 가능"
+    ],
+    "answer": "1",
+    "explanation": "상관 서브쿼리는 외부 쿼리의 컬럼을 참조하여 외부 쿼리의 각 행마다 반복 실행됩니다. 성능이 비효율적일 수 있어 가능하면 JOIN으로 변환하는 것이 좋습니다. 비상관 서브쿼리는 독립적으로 한 번만 실행됩니다.",
+    "tags": ["상관서브쿼리", "서브쿼리", "쿼리최적화"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "ox",
+    "difficulty": 2,
+    "question": "EXISTS 연산자는 서브쿼리의 결과가 존재하는지만 확인하므로 서브쿼리에서 SELECT *를 사용해도 성능에 큰 영향이 없다.",
+    "options": null,
+    "answer": "true",
+    "explanation": "EXISTS는 서브쿼리의 결과가 한 건이라도 있는지만 확인합니다. 실제 데이터를 반환하지 않으므로 SELECT 1이든 SELECT *이든 성능 차이가 거의 없습니다. 옵티마이저가 EXISTS의 동작 방식을 알고 최적화합니다. 관례적으로 SELECT 1을 사용하기도 합니다.",
+    "tags": ["EXISTS", "서브쿼리", "성능"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "code",
+    "difficulty": 3,
+    "question": "다음 두 쿼리의 결과가 다른 경우는?",
+    "code_snippet": "-- Query A:\nSELECT * FROM orders\nWHERE customer_id IN (SELECT id FROM customers WHERE city = 'Seoul');\n\n-- Query B:\nSELECT o.* FROM orders o\nJOIN customers c ON o.customer_id = c.id\nWHERE c.city = 'Seoul';",
+    "options": [
+      "customers에 중복 id가 있을 때",
+      "orders에 customer_id가 NULL인 행이 있을 때",
+      "customers 테이블이 비어있을 때",
+      "두 쿼리의 결과는 항상 같다"
+    ],
+    "answer": "0",
+    "explanation": "customers에 같은 id를 가진 중복 행이 있으면 JOIN은 해당 주문을 중복 반환하지만, IN 서브쿼리는 중복 없이 반환합니다. 예: customers에 id=1이 2행 있으면 JOIN은 해당 order를 2번 반환합니다. DISTINCT를 사용하거나 EXISTS로 변환하면 동일한 결과를 얻을 수 있습니다.",
+    "tags": ["IN", "JOIN", "서브쿼리변환"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "다음 중 SELF JOIN을 사용하는 대표적인 경우는?",
+    "options": [
+      "서로 다른 두 테이블의 연결",
+      "동일 테이블 내 계층 구조 조회",
+      "집계 함수 결과와의 조인",
+      "임시 테이블과의 조인"
+    ],
+    "answer": "1",
+    "explanation": "SELF JOIN은 같은 테이블을 자기 자신과 조인하는 것으로, 직원-관리자 관계나 조직도 같은 계층 구조를 조회할 때 주로 사용합니다. 예: SELECT e.name, m.name AS manager FROM employees e JOIN employees m ON e.manager_id = m.id",
+    "tags": ["SELF JOIN", "계층구조", "재귀"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "code",
+    "difficulty": 3,
+    "question": "다음 SQL의 실행 결과는?",
+    "code_snippet": "SELECT CASE\n  WHEN NULL = NULL THEN 'Equal'\n  WHEN NULL IS NULL THEN 'IS NULL True'\n  ELSE 'Unknown'\nEND AS result;",
+    "options": [
+      "Equal",
+      "IS NULL True",
+      "Unknown",
+      "에러 발생"
+    ],
+    "answer": "1",
+    "explanation": "NULL = NULL은 TRUE가 아닌 UNKNOWN을 반환하므로 첫 번째 조건은 만족하지 않습니다. NULL IS NULL은 TRUE를 반환하므로 'IS NULL True'가 출력됩니다. NULL 비교 시 항상 IS NULL 또는 IS NOT NULL을 사용해야 합니다.",
+    "tags": ["NULL", "CASE", "IS NULL"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "ox",
+    "difficulty": 1,
+    "question": "CROSS JOIN은 두 테이블의 모든 가능한 행 조합(카테시안 곱)을 반환한다.",
+    "options": null,
+    "answer": "true",
+    "explanation": "CROSS JOIN은 조인 조건 없이 두 테이블의 모든 행을 서로 조합합니다. A 테이블이 3행, B 테이블이 4행이면 결과는 12행입니다. 의도하지 않은 CROSS JOIN은 성능 문제를 일으킬 수 있으므로 주의해야 합니다.",
+    "tags": ["CROSS JOIN", "카테시안곱", "JOIN"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "multiple",
+    "difficulty": 3,
+    "question": "다음 중 N+1 문제를 해결하기 위한 방법이 아닌 것은?",
+    "options": [
+      "Eager Loading (즉시 로딩)",
+      "JOIN을 사용한 한 번의 쿼리",
+      "IN 절을 사용한 배치 로딩",
+      "인덱스 생성"
+    ],
+    "answer": "3",
+    "explanation": "N+1 문제는 연관된 데이터를 조회할 때 1번의 목록 조회 + N번의 상세 조회가 발생하는 문제입니다. Eager Loading, JOIN Fetch, IN 절 배치 로딩으로 해결할 수 있습니다. 인덱스는 개별 쿼리 성능을 높이지만 쿼리 횟수 자체를 줄이지는 않습니다.",
+    "tags": ["N+1문제", "ORM", "쿼리최적화"],
+    "source": null
+  }
+]

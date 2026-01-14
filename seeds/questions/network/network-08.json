@@ -1,0 +1,142 @@
+[
+  {
+    "category": "network",
+    "type": "multiple",
+    "difficulty": 1,
+    "question": "AWS Security Group(보안 그룹)의 특징으로 올바른 것은?",
+    "options": [
+      "서브넷 수준에서 동작하며 Stateless이다",
+      "인스턴스 수준에서 동작하며 Stateful이다",
+      "아웃바운드 트래픽만 제어한다",
+      "모든 트래픽을 기본적으로 허용한다"
+    ],
+    "answer": "1",
+    "explanation": "Security Group은 EC2 인스턴스(ENI) 수준의 가상 방화벽으로, Stateful합니다. 인바운드가 허용되면 응답 아웃바운드는 자동 허용됩니다. 기본적으로 인바운드는 모두 거부, 아웃바운드는 모두 허용입니다. 허용 규칙만 설정 가능하고(화이트리스트), 거부 규칙은 없습니다. NACL은 서브넷 수준, Stateless입니다.",
+    "tags": ["SecurityGroup", "AWS", "방화벽"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "Security Group과 NACL(Network ACL)의 차이점으로 올바른 것은?",
+    "options": [
+      "Security Group은 Stateless, NACL은 Stateful이다",
+      "Security Group은 인스턴스 수준, NACL은 서브넷 수준에서 동작한다",
+      "NACL은 허용 규칙만 설정할 수 있다",
+      "Security Group은 서브넷 수준에서 동작한다"
+    ],
+    "answer": "1",
+    "explanation": "Security Group: 인스턴스(ENI) 수준, Stateful, 허용 규칙만, 모든 규칙 평가. NACL: 서브넷 수준, Stateless, 허용/거부 규칙 모두, 번호 순서대로 평가. NACL은 인바운드 허용해도 아웃바운드 응답을 별도 허용해야 합니다. 일반적으로 Security Group을 주로 사용하고, NACL은 추가 방어층으로 활용합니다.",
+    "tags": ["SecurityGroup", "NACL", "차이점"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "NAT Gateway의 역할로 올바른 것은?",
+    "options": [
+      "퍼블릭 서브넷의 인스턴스가 인터넷에 접속하게 한다",
+      "프라이빗 서브넷의 인스턴스가 인터넷으로 아웃바운드 통신할 수 있게 한다",
+      "VPC 간 통신을 가능하게 한다",
+      "DNS 쿼리를 처리한다"
+    ],
+    "answer": "1",
+    "explanation": "NAT Gateway는 프라이빗 서브넷의 인스턴스가 인터넷으로 나갈 수 있게 합니다(소프트웨어 업데이트 등). 외부에서 프라이빗 서브넷으로의 인바운드는 차단됩니다. 퍼블릭 서브넷에 배치하고, 프라이빗 서브넷의 라우팅 테이블에 0.0.0.0/0 → NAT Gateway를 설정합니다. NAT Instance보다 관리가 쉽고 가용성이 높습니다.",
+    "tags": ["NATGateway", "프라이빗서브넷", "아웃바운드"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "AWS Application Load Balancer(ALB)의 특징으로 올바른 것은?",
+    "options": [
+      "Layer 4에서 동작하며 TCP/UDP만 지원한다",
+      "Layer 7에서 동작하며 HTTP/HTTPS 기반 라우팅이 가능하다",
+      "DNS 기반 로드 밸런싱만 제공한다",
+      "온프레미스 서버에만 사용 가능하다"
+    ],
+    "answer": "1",
+    "explanation": "ALB는 Layer 7(응용 계층) 로드 밸런서로, URL 경로, 호스트 헤더, HTTP 메서드 등 기반의 지능적 라우팅이 가능합니다. 마이크로서비스, 컨테이너에 적합합니다. NLB(Network Load Balancer)는 Layer 4로 TCP/UDP 트래픽을 처리하며, 고성능이 필요한 경우 사용합니다. CLB(Classic)는 레거시입니다.",
+    "tags": ["ALB", "L7로드밸런서", "AWS"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "multiple",
+    "difficulty": 3,
+    "question": "AWS Route 53의 라우팅 정책 중 '지연 시간 기반 라우팅(Latency-based Routing)'의 동작은?",
+    "options": [
+      "요청을 무작위 리전으로 분산한다",
+      "사용자와 가장 지연 시간이 낮은 리전의 리소스로 라우팅한다",
+      "특정 리전에 가중치를 부여하여 분산한다",
+      "장애 발생 시에만 다른 리전으로 라우팅한다"
+    ],
+    "answer": "1",
+    "explanation": "지연 시간 기반 라우팅은 AWS가 측정한 사용자와 각 리전 간의 지연 시간을 기반으로 가장 빠른 리전의 리소스로 DNS를 응답합니다. 글로벌 서비스에서 사용자 경험을 최적화합니다. 가중치 기반은 비율대로 분산, 장애 조치(Failover)는 헬스 체크 실패 시 전환, 지리적 위치 기반은 사용자 위치로 라우팅합니다.",
+    "tags": ["Route53", "라우팅정책", "지연시간"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "multiple",
+    "difficulty": 3,
+    "question": "AWS VPC Endpoint의 역할로 올바른 것은?",
+    "options": [
+      "VPC와 인터넷을 연결한다",
+      "VPC 내에서 AWS 서비스(S3, DynamoDB 등)에 프라이빗하게 접근할 수 있게 한다",
+      "온프레미스와 VPC를 VPN으로 연결한다",
+      "여러 VPC를 피어링한다"
+    ],
+    "answer": "1",
+    "explanation": "VPC Endpoint는 인터넷, NAT를 거치지 않고 VPC에서 AWS 서비스에 프라이빗하게 접근합니다. Gateway Endpoint(S3, DynamoDB용, 무료)와 Interface Endpoint(다른 서비스용, PrivateLink, 유료)가 있습니다. 트래픽이 AWS 네트워크 내에 머물러 보안이 강화되고, NAT 비용도 절감됩니다.",
+    "tags": ["VPCEndpoint", "PrivateLink", "AWS서비스"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "ox",
+    "difficulty": 1,
+    "question": "Security Group에서 인바운드 규칙을 허용하면, 해당 연결의 응답 트래픽은 아웃바운드 규칙과 관계없이 자동으로 허용된다.",
+    "options": null,
+    "answer": "true",
+    "explanation": "맞습니다. Security Group은 Stateful이므로 연결 상태를 추적합니다. 인바운드가 허용되면 해당 연결의 응답(아웃바운드)은 자동 허용됩니다. 반대로 아웃바운드가 허용된 연결의 응답(인바운드)도 자동 허용됩니다. NACL은 Stateless라 인바운드, 아웃바운드를 각각 설정해야 합니다.",
+    "tags": ["SecurityGroup", "Stateful", "연결추적"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "ox",
+    "difficulty": 2,
+    "question": "Elastic IP(EIP)를 EC2 인스턴스에 연결하면 인스턴스를 중지했다가 다시 시작해도 동일한 공인 IP를 유지할 수 있다.",
+    "options": null,
+    "answer": "true",
+    "explanation": "맞습니다. 일반 공인 IP는 인스턴스 중지/시작 시 변경될 수 있지만, Elastic IP는 계정에 할당된 고정 공인 IP로 인스턴스 상태와 관계없이 유지됩니다. DNS 설정, 화이트리스트 등에서 고정 IP가 필요할 때 사용합니다. 단, 연결되지 않은 EIP는 비용이 발생하므로 사용하지 않으면 릴리스해야 합니다.",
+    "tags": ["ElasticIP", "고정IP", "EC2"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "ox",
+    "difficulty": 2,
+    "question": "AWS Transit Gateway를 사용하면 여러 VPC와 온프레미스 네트워크를 중앙 허브 방식으로 연결할 수 있다.",
+    "options": null,
+    "answer": "true",
+    "explanation": "맞습니다. Transit Gateway는 중앙 허브로 여러 VPC, VPN, Direct Connect를 연결합니다. VPC 피어링은 1:1 연결이라 VPC가 많으면 관리가 복잡하지만, Transit Gateway는 허브-스포크 구조로 단순화합니다. 라우팅 테이블로 세밀한 트래픽 제어가 가능하고, 리전 간 피어링도 지원합니다.",
+    "tags": ["TransitGateway", "VPC연결", "허브"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "blank",
+    "difficulty": 2,
+    "question": "AWS에서 온프레미스 데이터센터와 VPC를 암호화된 터널로 연결하는 서비스는 _____ VPN이다.",
+    "options": null,
+    "answer": "Site-to-Site",
+    "explanation": "Site-to-Site VPN(구 VPN Connection)은 온프레미스 네트워크와 VPC를 IPsec VPN 터널로 연결합니다. Virtual Private Gateway(VGW)를 VPC에 연결하고, 온프레미스에 Customer Gateway를 설정합니다. 인터넷을 통해 암호화된 통신을 제공합니다. Direct Connect는 전용선으로 더 안정적이고 빠르지만 비용이 높습니다. Client VPN은 개별 사용자 접속용입니다.",
+    "tags": ["Site-to-Site VPN", "온프레미스", "VPC연결"],
+    "source": null
+  }
+]

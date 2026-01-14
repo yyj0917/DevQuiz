@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { QuizHomeClient } from '@/components/quiz/quiz-home-client';
 
-export default async function Home() {
+export default async function HomePage() {
   const supabase = await createClient();
 
   const {
@@ -34,18 +34,11 @@ export default async function Home() {
     .eq('user_id', user.id)
     .single();
 
-  // 총 푼 문제 수 계산
-  // quiz_answers는 attempt_id를 통해 연결되므로, user의 모든 attempt를 통해 조회
-  const { data: attempts } = await supabase
-    .from('quiz_attempts')
-    .select('id')
-    .eq('user_id', user.id);
-
-  const attemptIds = attempts?.map((a) => a.id) || [];
+  // 총 푼 문제 수 계산 (quiz_answers에서)
   const { count: totalAnswers } = await supabase
     .from('quiz_answers')
     .select('*', { count: 'exact', head: true })
-    .in('attempt_id', attemptIds);
+    .eq('user_id', user.id);
 
   const stats = {
     currentStreak: streak?.current_streak || 0,

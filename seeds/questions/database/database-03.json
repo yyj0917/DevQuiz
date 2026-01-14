@@ -1,0 +1,154 @@
+[
+  {
+    "category": "database",
+    "type": "multiple",
+    "difficulty": 1,
+    "question": "트랜잭션의 ACID 속성 중 '원자성(Atomicity)'의 의미는?",
+    "options": [
+      "트랜잭션 결과가 영구적으로 저장됨",
+      "트랜잭션이 모두 실행되거나 모두 취소됨",
+      "동시 실행해도 순차 실행과 같은 결과",
+      "데이터베이스 일관성 유지"
+    ],
+    "answer": "1",
+    "explanation": "원자성(Atomicity)은 트랜잭션 내의 모든 연산이 완전히 수행되거나 전혀 수행되지 않아야 함을 의미합니다(All or Nothing). 은행 이체에서 출금만 되고 입금이 안 되는 상황을 방지합니다. 영속성은 Durability, 격리성은 Isolation, 일관성은 Consistency입니다.",
+    "tags": ["ACID", "원자성", "트랜잭션"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "트랜잭션의 격리 수준(Isolation Level) 중 가장 낮은 수준은?",
+    "options": [
+      "SERIALIZABLE",
+      "REPEATABLE READ",
+      "READ COMMITTED",
+      "READ UNCOMMITTED"
+    ],
+    "answer": "3",
+    "explanation": "격리 수준이 낮은 순서: READ UNCOMMITTED < READ COMMITTED < REPEATABLE READ < SERIALIZABLE. READ UNCOMMITTED는 커밋되지 않은 데이터도 읽을 수 있어 Dirty Read가 발생할 수 있습니다. 격리 수준이 높을수록 동시성은 떨어지지만 데이터 정합성은 향상됩니다.",
+    "tags": ["격리수준", "Isolation Level", "트랜잭션"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "ox",
+    "difficulty": 2,
+    "question": "READ COMMITTED 격리 수준에서는 Non-Repeatable Read 현상이 발생할 수 있다.",
+    "options": null,
+    "answer": "true",
+    "explanation": "READ COMMITTED에서는 같은 트랜잭션 내에서 같은 쿼리를 두 번 실행할 때 다른 트랜잭션의 커밋으로 인해 다른 결과가 나올 수 있습니다(Non-Repeatable Read). Dirty Read는 방지되지만 Non-Repeatable Read와 Phantom Read는 발생할 수 있습니다.",
+    "tags": ["READ COMMITTED", "Non-Repeatable Read", "격리수준"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "multiple",
+    "difficulty": 1,
+    "question": "다음 중 인덱스(Index)의 주된 목적은?",
+    "options": [
+      "데이터 중복 방지",
+      "데이터 조회 속도 향상",
+      "데이터 무결성 보장",
+      "저장 공간 절약"
+    ],
+    "answer": "1",
+    "explanation": "인덱스는 데이터 조회 속도를 향상시키기 위한 자료구조입니다. 책의 목차처럼 원하는 데이터의 위치를 빠르게 찾을 수 있게 합니다. 단, 인덱스 생성 시 추가 저장 공간이 필요하고 INSERT, UPDATE, DELETE 시 인덱스도 갱신해야 하므로 쓰기 성능은 저하될 수 있습니다.",
+    "tags": ["인덱스", "조회성능", "최적화"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "다음 중 인덱스를 생성하면 오히려 성능이 저하될 수 있는 경우는?",
+    "options": [
+      "WHERE 절에서 자주 사용되는 컬럼",
+      "JOIN의 연결 조건으로 사용되는 컬럼",
+      "INSERT, UPDATE, DELETE가 빈번한 테이블",
+      "선택도(Selectivity)가 높은 컬럼"
+    ],
+    "answer": "2",
+    "explanation": "INSERT, UPDATE, DELETE가 빈번한 테이블에서는 매번 인덱스도 함께 갱신해야 하므로 오히려 성능이 저하될 수 있습니다. 인덱스는 읽기 성능을 높이지만 쓰기 성능을 저하시킵니다. 선택도가 높은(중복이 적은) 컬럼이 인덱스에 적합합니다.",
+    "tags": ["인덱스", "성능", "INSERT", "UPDATE"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "code",
+    "difficulty": 2,
+    "question": "다음 SQL에서 인덱스를 활용할 수 없는 쿼리는?",
+    "code_snippet": "-- name 컬럼에 인덱스가 있다고 가정\n\n-- A: SELECT * FROM users WHERE name = 'John';\n-- B: SELECT * FROM users WHERE name LIKE 'John%';\n-- C: SELECT * FROM users WHERE name LIKE '%John';\n-- D: SELECT * FROM users WHERE name > 'J';",
+    "options": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "answer": "2",
+    "explanation": "LIKE '%John'처럼 와일드카드가 앞에 오면 인덱스를 활용할 수 없습니다. 인덱스는 정렬된 상태로 저장되어 있어 시작 부분을 알아야 탐색이 가능합니다. 'John%'은 J로 시작하는 범위를 찾을 수 있지만, '%John'은 전체 테이블을 스캔해야 합니다.",
+    "tags": ["인덱스", "LIKE", "쿼리최적화"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "ox",
+    "difficulty": 2,
+    "question": "복합 인덱스(Composite Index)는 인덱스에 포함된 모든 컬럼을 조건에 사용해야만 활용할 수 있다.",
+    "options": null,
+    "answer": "false",
+    "explanation": "복합 인덱스는 왼쪽 컬럼부터 순서대로 사용하면 부분적으로도 활용할 수 있습니다. 예: (A, B, C) 인덱스에서 A만 사용하거나 A, B를 사용하면 인덱스 활용이 가능합니다. 하지만 B만 사용하거나 B, C만 사용하면 인덱스를 활용할 수 없습니다(Leading Column 원칙).",
+    "tags": ["복합인덱스", "Leading Column", "인덱스"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "multiple",
+    "difficulty": 3,
+    "question": "클러스터드 인덱스(Clustered Index)와 논클러스터드 인덱스(Non-Clustered Index)의 차이점으로 올바른 것은?",
+    "options": [
+      "클러스터드 인덱스는 테이블당 여러 개 생성 가능",
+      "논클러스터드 인덱스가 조회 성능이 더 좋음",
+      "클러스터드 인덱스는 데이터 자체가 정렬되어 저장됨",
+      "논클러스터드 인덱스는 기본키에만 사용 가능"
+    ],
+    "answer": "2",
+    "explanation": "클러스터드 인덱스는 테이블의 데이터 자체가 인덱스 키 순서로 물리적으로 정렬되어 저장됩니다. 따라서 테이블당 1개만 생성 가능합니다. 논클러스터드 인덱스는 별도의 인덱스 페이지에 저장되어 데이터의 포인터를 가지며, 여러 개 생성 가능합니다.",
+    "tags": ["클러스터드인덱스", "인덱스구조", "B-Tree"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "code",
+    "difficulty": 3,
+    "question": "다음 트랜잭션 실행 후 최종 결과는? (초기 balance = 1000)",
+    "code_snippet": "START TRANSACTION;\nUPDATE accounts SET balance = balance - 500 WHERE id = 1;\nSAVEPOINT sp1;\nUPDATE accounts SET balance = balance - 300 WHERE id = 1;\nROLLBACK TO sp1;\nUPDATE accounts SET balance = balance - 200 WHERE id = 1;\nCOMMIT;",
+    "options": [
+      "1000",
+      "700",
+      "500",
+      "300"
+    ],
+    "answer": "3",
+    "explanation": "1) -500 → balance = 500, 2) SAVEPOINT 설정, 3) -300 → balance = 200, 4) ROLLBACK TO sp1 → balance = 500으로 복구, 5) -200 → balance = 300, 6) COMMIT. SAVEPOINT는 트랜잭션 내 특정 지점으로 부분 롤백할 수 있게 합니다.",
+    "tags": ["SAVEPOINT", "ROLLBACK", "트랜잭션"],
+    "source": null
+  },
+  {
+    "category": "database",
+    "type": "multiple",
+    "difficulty": 3,
+    "question": "데드락(Deadlock)을 예방하기 위한 방법으로 올바르지 않은 것은?",
+    "options": [
+      "트랜잭션이 필요한 모든 자원을 한 번에 요청",
+      "자원 요청 순서를 일관되게 유지",
+      "트랜잭션 대기 시간에 타임아웃 설정",
+      "모든 트랜잭션을 SERIALIZABLE로 실행"
+    ],
+    "answer": "3",
+    "explanation": "SERIALIZABLE 격리 수준은 가장 높은 격리성을 제공하지만 데드락을 예방하지는 않습니다. 오히려 락 사용이 많아져 데드락 가능성이 높아질 수 있습니다. 데드락 예방법: 모든 자원을 한 번에 요청, 자원 요청 순서 고정, 타임아웃 설정, 2PL(Two-Phase Locking) 등이 있습니다.",
+    "tags": ["데드락", "락킹", "트랜잭션"],
+    "source": null
+  }
+]

@@ -1,0 +1,142 @@
+[
+  {
+    "category": "network",
+    "type": "multiple",
+    "difficulty": 1,
+    "question": "DNS(Domain Name System)의 주된 역할은?",
+    "options": [
+      "IP 주소를 MAC 주소로 변환한다",
+      "도메인 이름을 IP 주소로 변환한다",
+      "데이터를 암호화한다",
+      "네트워크 트래픽을 분산한다"
+    ],
+    "answer": "1",
+    "explanation": "DNS는 사람이 기억하기 쉬운 도메인 이름(예: google.com)을 컴퓨터가 이해하는 IP 주소(예: 142.250.196.110)로 변환합니다. 인터넷의 전화번호부 역할을 합니다. DNS는 계층적 분산 데이터베이스 구조로, 루트 서버 → TLD 서버 → 권한 있는 네임 서버 순으로 쿼리합니다.",
+    "tags": ["DNS", "도메인", "IP변환"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "브라우저에 URL을 입력했을 때 DNS 조회 순서로 올바른 것은?",
+    "options": [
+      "루트 DNS → 브라우저 캐시 → ISP DNS",
+      "브라우저 캐시 → OS 캐시 → 로컬 DNS(ISP) → 루트/TLD/권한 DNS",
+      "권한 DNS → TLD DNS → 루트 DNS",
+      "ISP DNS → 브라우저 캐시 → OS 캐시"
+    ],
+    "answer": "1",
+    "explanation": "DNS 조회는 캐시부터 확인합니다: (1) 브라우저 캐시 (2) OS 캐시(/etc/hosts 포함) (3) 로컬 DNS 서버(주로 ISP 제공, 재귀적 쿼리 수행) (4) 루트 DNS → TLD DNS(.com 등) → 권한 있는 DNS 서버. 각 단계에서 캐시되면 상위 조회가 생략됩니다. TTL이 만료되면 다시 조회합니다.",
+    "tags": ["DNS", "조회순서", "캐시"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "쿠키(Cookie)와 세션(Session)의 차이점으로 올바른 것은?",
+    "options": [
+      "쿠키는 서버에, 세션은 클라이언트에 저장된다",
+      "쿠키는 클라이언트에, 세션은 서버에 저장된다",
+      "쿠키와 세션 모두 서버에 저장된다",
+      "쿠키와 세션 모두 클라이언트에 저장된다"
+    ],
+    "answer": "1",
+    "explanation": "쿠키는 클라이언트(브라우저)에 저장되는 작은 텍스트 파일로, 요청 시 자동으로 서버에 전송됩니다. 세션은 서버 메모리나 DB에 저장되고, 클라이언트는 세션 ID만 쿠키로 보관합니다. 쿠키는 노출 위험이 있어 민감한 정보는 세션에 저장합니다. 세션은 서버 리소스를 사용합니다.",
+    "tags": ["쿠키", "세션", "저장위치"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "JWT(JSON Web Token)의 구조로 올바른 것은?",
+    "options": [
+      "암호화키.데이터.서명",
+      "헤더.페이로드.서명",
+      "사용자ID.권한.만료시간",
+      "토큰ID.세션ID.검증코드"
+    ],
+    "answer": "1",
+    "explanation": "JWT는 Header.Payload.Signature 세 부분으로 구성됩니다. 헤더는 토큰 타입과 알고리즘, 페이로드는 클레임(사용자 정보, 만료 시간 등), 서명은 위변조 검증용입니다. 각 부분은 Base64Url로 인코딩됩니다. 서명으로 무결성을 검증하지만, 페이로드는 암호화되지 않아 민감 정보는 넣지 않습니다.",
+    "tags": ["JWT", "구조", "토큰"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "multiple",
+    "difficulty": 3,
+    "question": "세션 기반 인증 대비 JWT의 장점으로 올바른 것은?",
+    "options": [
+      "토큰 탈취 시 즉시 무효화가 가능하다",
+      "서버에 상태를 저장하지 않아 수평 확장이 용이하다",
+      "토큰 크기가 세션 ID보다 작다",
+      "암호화되어 있어 내용을 볼 수 없다"
+    ],
+    "answer": "1",
+    "explanation": "JWT는 Stateless하여 서버가 상태를 저장할 필요 없이 토큰 자체에서 정보를 검증합니다. 서버 확장 시 세션 공유 문제가 없습니다. 단점은 토큰 탈취 시 만료까지 유효하고(즉시 무효화 어려움), 세션 ID보다 크기가 크며, Base64 인코딩은 암호화가 아니라 디코딩이 가능합니다.",
+    "tags": ["JWT", "세션", "Stateless", "확장성"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "multiple",
+    "difficulty": 3,
+    "question": "DNS 레코드 타입 중 A 레코드와 CNAME 레코드의 차이로 올바른 것은?",
+    "options": [
+      "A는 IPv6 주소, CNAME은 IPv4 주소를 매핑한다",
+      "A는 도메인을 IP 주소에, CNAME은 도메인을 다른 도메인에 매핑한다",
+      "A는 메일 서버, CNAME은 웹 서버를 지정한다",
+      "둘 다 같은 기능을 한다"
+    ],
+    "answer": "1",
+    "explanation": "A 레코드는 도메인을 IPv4 주소에 직접 매핑합니다(예: example.com → 1.2.3.4). CNAME은 도메인을 다른 도메인에 별칭으로 연결합니다(예: www.example.com → example.com). CNAME은 IP 변경 시 한 곳만 수정하면 되어 편리합니다. AAAA는 IPv6, MX는 메일 서버, TXT는 텍스트 정보입니다.",
+    "tags": ["DNS", "A레코드", "CNAME"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "ox",
+    "difficulty": 1,
+    "question": "쿠키에 HttpOnly 속성을 설정하면 JavaScript에서 접근할 수 없어 XSS 공격을 방어하는 데 도움이 된다.",
+    "options": null,
+    "answer": "true",
+    "explanation": "맞습니다. HttpOnly 쿠키는 document.cookie로 접근할 수 없어 XSS(Cross-Site Scripting) 공격으로 쿠키 탈취를 방지합니다. Secure 속성은 HTTPS에서만 전송되게 합니다. SameSite 속성은 CSRF 방어에 도움이 됩니다. 세션 ID 같은 민감한 쿠키는 이 속성들을 설정하는 것이 좋습니다.",
+    "tags": ["쿠키", "HttpOnly", "XSS", "보안"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "ox",
+    "difficulty": 2,
+    "question": "DNS는 기본적으로 UDP를 사용하지만, 응답이 512바이트를 초과하면 TCP를 사용할 수 있다.",
+    "options": null,
+    "answer": "true",
+    "explanation": "맞습니다. DNS 쿼리는 빠른 응답이 중요하고 데이터가 작아 UDP(포트 53)를 기본 사용합니다. 하지만 응답이 512바이트(EDNS0 확장 시 더 큼)를 초과하거나, Zone Transfer(DNS 복제) 시에는 TCP를 사용합니다. TCP는 신뢰성이 필요한 대용량 전송에 적합합니다.",
+    "tags": ["DNS", "UDP", "TCP"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "ox",
+    "difficulty": 2,
+    "question": "JWT의 페이로드(Payload)는 암호화되어 있어 서버의 비밀키 없이는 내용을 볼 수 없다.",
+    "options": null,
+    "answer": "false",
+    "explanation": "틀렸습니다. JWT의 페이로드는 Base64Url로 인코딩되어 있을 뿐, 암호화되지 않습니다. 누구나 디코딩하여 내용을 볼 수 있습니다. 서명은 위변조 방지용이지 암호화가 아닙니다. 따라서 비밀번호, 개인정보 등 민감한 데이터는 JWT에 넣지 않아야 합니다. 암호화가 필요하면 JWE(JSON Web Encryption)를 사용합니다.",
+    "tags": ["JWT", "암호화", "Base64", "보안"],
+    "source": null
+  },
+  {
+    "category": "network",
+    "type": "blank",
+    "difficulty": 1,
+    "question": "쿠키의 _____ 속성을 설정하면 해당 쿠키가 HTTPS 연결에서만 전송된다.",
+    "options": null,
+    "answer": "Secure",
+    "explanation": "Secure 속성이 설정된 쿠키는 HTTPS 연결에서만 서버로 전송됩니다. HTTP에서는 전송되지 않아 네트워크 도청으로부터 보호됩니다. HttpOnly는 JavaScript 접근 차단, SameSite는 다른 사이트에서의 요청 시 쿠키 전송을 제한합니다. 보안을 위해 세 속성을 함께 사용하는 것이 권장됩니다.",
+    "tags": ["쿠키", "Secure", "HTTPS", "보안"],
+    "source": null
+  }
+]

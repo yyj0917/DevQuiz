@@ -1,0 +1,156 @@
+[
+  {
+    "category": "algorithm",
+    "type": "code",
+    "difficulty": 1,
+    "question": "다음 코드의 시간복잡도는?",
+    "code_snippet": "function solution(n) {\n  for (let i = 0; i < n; i++) {\n    for (let j = 0; j < n; j++) {\n      console.log(i, j);\n    }\n  }\n}",
+    "options": [
+      "O(n)",
+      "O(n log n)",
+      "O(n²)",
+      "O(2ⁿ)"
+    ],
+    "answer": "2",
+    "explanation": "외부 반복문이 n번, 내부 반복문도 n번 실행되므로 총 n × n = n² 번 실행됩니다. 중첩 반복문의 시간복잡도는 각 반복문의 횟수를 곱합니다. 이는 코딩테스트에서 시간 초과 여부를 판단하는 기본이 됩니다.",
+    "tags": ["시간복잡도", "Big-O", "중첩반복문"],
+    "source": null
+  },
+  {
+    "category": "algorithm",
+    "type": "code",
+    "difficulty": 2,
+    "question": "다음 코드의 시간복잡도는?",
+    "code_snippet": "function solution(n) {\n  for (let i = 1; i < n; i *= 2) {\n    console.log(i);\n  }\n}",
+    "options": [
+      "O(n)",
+      "O(log n)",
+      "O(n log n)",
+      "O(√n)"
+    ],
+    "answer": "1",
+    "explanation": "i가 1, 2, 4, 8, 16... 으로 2배씩 증가하므로 log₂n번 실행됩니다. 이진 탐색, 힙 연산 등에서 자주 나타나는 패턴입니다. n이 1,000,000이어도 약 20번만 실행되어 매우 효율적입니다.",
+    "tags": ["시간복잡도", "로그", "이진탐색"],
+    "source": null
+  },
+  {
+    "category": "algorithm",
+    "type": "multiple",
+    "difficulty": 1,
+    "question": "n = 100,000일 때 시간 제한 1초 내에 통과하기 어려운 알고리즘의 시간복잡도는? (1초에 약 1억 번 연산 가정)",
+    "options": [
+      "O(n)",
+      "O(n log n)",
+      "O(n²)",
+      "O(n√n)"
+    ],
+    "answer": "2",
+    "explanation": "n = 100,000일 때: O(n) = 10만, O(n log n) ≈ 170만, O(n²) = 100억, O(n√n) ≈ 3,160만. O(n²)은 100억으로 1초(1억)를 크게 초과합니다. 코테에서 n ≤ 10만이면 O(n²)은 거의 시간 초과입니다.",
+    "tags": ["시간복잡도", "코딩테스트", "시간제한"],
+    "source": null
+  },
+  {
+    "category": "algorithm",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "이진 탐색(Binary Search)을 적용하기 위한 필수 조건은?",
+    "options": [
+      "배열의 크기가 2의 거듭제곱이어야 함",
+      "배열이 정렬되어 있어야 함",
+      "배열에 중복 값이 없어야 함",
+      "배열의 모든 값이 양수여야 함"
+    ],
+    "answer": "1",
+    "explanation": "이진 탐색은 정렬된 배열에서만 사용할 수 있습니다. 중앙값과 비교하여 탐색 범위를 절반씩 줄이므로, 정렬되지 않으면 올바른 방향을 결정할 수 없습니다. 중복 값이 있어도 동작하며, 음수도 가능합니다.",
+    "tags": ["이진탐색", "Binary Search", "정렬"],
+    "source": null
+  },
+  {
+    "category": "algorithm",
+    "type": "code",
+    "difficulty": 2,
+    "question": "정렬된 배열 [1, 3, 5, 7, 9, 11]에서 target = 7을 이진 탐색할 때, 비교 순서로 올바른 것은?",
+    "code_snippet": "// 배열: [1, 3, 5, 7, 9, 11]\n// 인덱스: 0  1  2  3  4  5\n// target = 7",
+    "options": [
+      "5 → 9 → 7",
+      "5 → 7",
+      "1 → 3 → 5 → 7",
+      "5 → 3 → 7"
+    ],
+    "answer": "0",
+    "explanation": "1) mid = (0+5)/2 = 2, arr[2] = 5 < 7 → 오른쪽 탐색. 2) mid = (3+5)/2 = 4, arr[4] = 9 > 7 → 왼쪽 탐색. 3) mid = (3+3)/2 = 3, arr[3] = 7 = target → 찾음! 총 3번의 비교로 O(log n) 성능을 보여줍니다.",
+    "tags": ["이진탐색", "Binary Search", "탐색과정"],
+    "source": null
+  },
+  {
+    "category": "algorithm",
+    "type": "ox",
+    "difficulty": 2,
+    "question": "이진 탐색에서 '특정 값 이상인 첫 번째 위치'를 찾는 것을 Lower Bound라고 한다.",
+    "options": null,
+    "answer": "true",
+    "explanation": "Lower Bound는 target 이상인 첫 번째 위치, Upper Bound는 target 초과인 첫 번째 위치입니다. 코딩테스트에서 '가능한 최솟값', '특정 조건을 만족하는 최소' 문제에 자주 활용됩니다. C++의 lower_bound, upper_bound 함수가 이에 해당합니다.",
+    "tags": ["이진탐색", "Lower Bound", "Upper Bound"],
+    "source": null
+  },
+  {
+    "category": "algorithm",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "투 포인터(Two Pointer) 알고리즘의 일반적인 시간복잡도는?",
+    "options": [
+      "O(log n)",
+      "O(n)",
+      "O(n log n)",
+      "O(n²)"
+    ],
+    "answer": "1",
+    "explanation": "투 포인터는 두 개의 포인터가 배열을 한 번씩만 훑으므로 O(n)입니다. 정렬된 배열에서 합이 특정 값인 쌍 찾기, 연속 부분합 문제 등에서 O(n²)를 O(n)으로 최적화할 수 있는 강력한 기법입니다.",
+    "tags": ["투포인터", "Two Pointer", "최적화"],
+    "source": null
+  },
+  {
+    "category": "algorithm",
+    "type": "code",
+    "difficulty": 3,
+    "question": "다음 코드가 해결하는 문제는?",
+    "code_snippet": "function solution(arr, target) {\n  arr.sort((a, b) => a - b);\n  let left = 0, right = arr.length - 1;\n  \n  while (left < right) {\n    const sum = arr[left] + arr[right];\n    if (sum === target) return [arr[left], arr[right]];\n    else if (sum < target) left++;\n    else right--;\n  }\n  return null;\n}",
+    "options": [
+      "배열에서 최댓값과 최솟값 찾기",
+      "합이 target인 두 수 찾기",
+      "연속된 부분합이 target인 구간 찾기",
+      "target보다 큰 첫 번째 수 찾기"
+    ],
+    "answer": "1",
+    "explanation": "정렬 후 양 끝에서 시작하여 합이 target보다 작으면 left++, 크면 right--하여 합이 target인 쌍을 O(n log n + n) = O(n log n)에 찾습니다. 완전탐색 O(n²)보다 효율적입니다. 코테 단골 문제입니다.",
+    "tags": ["투포인터", "Two Sum", "정렬"],
+    "source": null
+  },
+  {
+    "category": "algorithm",
+    "type": "multiple",
+    "difficulty": 3,
+    "question": "슬라이딩 윈도우(Sliding Window) 알고리즘이 효과적인 문제는?",
+    "options": [
+      "배열의 모든 부분집합의 합 구하기",
+      "고정 크기 구간의 최대 합 구하기",
+      "배열에서 중복 제거하기",
+      "이진 탐색으로 값 찾기"
+    ],
+    "answer": "1",
+    "explanation": "슬라이딩 윈도우는 고정 또는 가변 크기의 구간을 한 칸씩 이동하며 계산합니다. 앞에서 빠지는 값을 빼고 뒤에 들어오는 값을 더하면 각 구간을 O(1)에 계산하여 전체 O(n)으로 해결합니다. '연속 K개의 최대합', '특정 조건을 만족하는 최소 구간' 문제에 필수입니다.",
+    "tags": ["슬라이딩윈도우", "구간합", "최적화"],
+    "source": null
+  },
+  {
+    "category": "algorithm",
+    "type": "ox",
+    "difficulty": 1,
+    "question": "이진 탐색의 시간복잡도는 O(log n)이고, 선형 탐색의 시간복잡도는 O(n)이다.",
+    "options": null,
+    "answer": "true",
+    "explanation": "이진 탐색은 매번 탐색 범위를 절반으로 줄이므로 O(log n), 선형 탐색은 처음부터 끝까지 순차 탐색하므로 O(n)입니다. 10억 개의 데이터에서 이진 탐색은 약 30번, 선형 탐색은 최대 10억 번 비교가 필요합니다.",
+    "tags": ["이진탐색", "선형탐색", "시간복잡도"],
+    "source": null
+  }
+]

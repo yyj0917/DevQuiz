@@ -1,0 +1,142 @@
+[
+  {
+    "category": "data-structure",
+    "type": "multiple",
+    "difficulty": 1,
+    "question": "그래프(Graph)의 구성 요소로 올바른 것은?",
+    "options": [
+      "루트와 리프",
+      "정점(Vertex)과 간선(Edge)",
+      "키와 값",
+      "헤드와 테일"
+    ],
+    "answer": "1",
+    "explanation": "그래프는 정점(Vertex, Node)과 그들을 연결하는 간선(Edge)으로 구성됩니다. 트리는 사이클이 없는 연결 그래프의 특수한 경우입니다. 그래프는 방향 유무(유향/무향), 가중치 유무, 연결 여부 등으로 분류됩니다. 소셜 네트워크, 지도, 웹 페이지 링크 등 다양한 관계를 표현할 수 있습니다.",
+    "tags": ["그래프", "정점", "간선"],
+    "source": null
+  },
+  {
+    "category": "data-structure",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "그래프를 표현하는 방법 중 인접 리스트(Adjacency List)와 인접 행렬(Adjacency Matrix)의 비교로 올바른 것은?",
+    "options": [
+      "인접 행렬은 희소 그래프에서 공간 효율적이다",
+      "인접 리스트는 간선 존재 여부 확인이 O(1)이다",
+      "인접 리스트는 희소 그래프에서 공간 효율적이고, 인접 행렬은 간선 확인이 O(1)이다",
+      "두 방식의 공간 복잡도는 항상 동일하다"
+    ],
+    "answer": "2",
+    "explanation": "인접 행렬은 O(V²) 공간을 사용하고 간선 확인이 O(1)입니다. 간선이 많은 밀집 그래프에 적합합니다. 인접 리스트는 O(V+E) 공간을 사용하고 간선 확인은 O(degree)입니다. 간선이 적은 희소 그래프에 효율적입니다. 대부분의 실제 그래프(소셜 네트워크, 웹 등)는 희소 그래프여서 인접 리스트를 많이 사용합니다.",
+    "tags": ["그래프표현", "인접리스트", "인접행렬"],
+    "source": null
+  },
+  {
+    "category": "data-structure",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "우선순위 큐(Priority Queue)를 구현하기에 가장 적합한 자료구조는?",
+    "options": [
+      "배열",
+      "연결 리스트",
+      "힙(Heap)",
+      "스택"
+    ],
+    "answer": "2",
+    "explanation": "힙은 최대/최소값 접근이 O(1), 삽입/삭제가 O(log n)으로 우선순위 큐에 가장 적합합니다. 정렬된 배열은 삽입이 O(n), 정렬된 연결 리스트도 삽입에 O(n)이 걸립니다. 정렬되지 않은 배열/연결 리스트는 삭제에 O(n)입니다. 다익스트라, 허프만 코딩, 작업 스케줄링 등에서 우선순위 큐가 사용됩니다.",
+    "tags": ["우선순위큐", "힙", "구현"],
+    "source": null
+  },
+  {
+    "category": "data-structure",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "유향 그래프(Directed Graph)와 무향 그래프(Undirected Graph)의 차이로 올바른 것은?",
+    "options": [
+      "유향 그래프는 가중치가 있고, 무향 그래프는 가중치가 없다",
+      "유향 그래프의 간선은 방향이 있고, 무향 그래프의 간선은 양방향이다",
+      "유향 그래프는 사이클이 없고, 무향 그래프는 사이클이 있다",
+      "유향 그래프는 트리 구조이고, 무향 그래프는 그래프 구조이다"
+    ],
+    "answer": "1",
+    "explanation": "유향 그래프(Directed Graph)의 간선은 방향이 있어 (A→B)와 (B→A)가 다릅니다. 무향 그래프(Undirected Graph)의 간선은 양방향으로, (A,B)는 A↔B를 의미합니다. 가중치 유무는 별개의 속성입니다. 트위터 팔로우는 유향, 페이스북 친구는 무향으로 모델링할 수 있습니다. DAG(Directed Acyclic Graph)는 사이클이 없는 유향 그래프입니다.",
+    "tags": ["유향그래프", "무향그래프", "방향성"],
+    "source": null
+  },
+  {
+    "category": "data-structure",
+    "type": "multiple",
+    "difficulty": 3,
+    "question": "다음 상황에서 가장 적합한 자료구조는? \"실시간으로 데이터가 추가되며, 항상 중앙값(median)을 빠르게 구해야 한다.\"",
+    "options": [
+      "정렬된 배열",
+      "이진 탐색 트리",
+      "두 개의 힙 (최대 힙 + 최소 힙)",
+      "해시 테이블"
+    ],
+    "answer": "2",
+    "explanation": "최대 힙에 작은 절반을, 최소 힙에 큰 절반을 저장하면 중앙값을 O(1)에 구할 수 있습니다. 새 데이터 삽입은 O(log n)입니다. 정렬된 배열은 삽입에 O(n), BST는 균형이 안 맞으면 O(n)이 될 수 있습니다. 이 기법은 데이터 스트림의 중앙값, 슬라이딩 윈도우 중앙값 문제에 자주 사용됩니다.",
+    "tags": ["힙", "중앙값", "자료구조선택"],
+    "source": null
+  },
+  {
+    "category": "data-structure",
+    "type": "multiple",
+    "difficulty": 3,
+    "question": "Trie(트라이) 자료구조의 주된 용도로 올바른 것은?",
+    "options": [
+      "숫자 데이터의 정렬",
+      "그래프의 최단 경로 탐색",
+      "문자열 검색 및 자동 완성 기능",
+      "이미지 데이터의 저장"
+    ],
+    "answer": "2",
+    "explanation": "Trie(Prefix Tree)는 문자열을 저장하는 트리로, 각 노드가 문자를 나타냅니다. 공통 접두사를 공유하므로 자동 완성, 사전 검색, IP 라우팅 테이블 등에 효율적입니다. 문자열 길이 m에 대해 검색, 삽입이 O(m)입니다. 해시 테이블보다 접두사 검색에 유리하고, 정렬된 순서로 순회할 수 있습니다.",
+    "tags": ["Trie", "트라이", "문자열검색", "자동완성"],
+    "source": null
+  },
+  {
+    "category": "data-structure",
+    "type": "ox",
+    "difficulty": 1,
+    "question": "트리(Tree)는 사이클이 없는 연결 그래프이다.",
+    "options": null,
+    "answer": "true",
+    "explanation": "맞습니다. 트리는 그래프의 특수한 형태로, 사이클이 없고 모든 노드가 연결되어 있습니다. n개 노드의 트리는 정확히 n-1개의 간선을 가집니다. 임의의 두 노드 사이에 경로가 정확히 하나 존재합니다. 루트를 지정하면 계층 구조가 되어 부모-자식 관계가 정의됩니다.",
+    "tags": ["트리", "그래프", "사이클"],
+    "source": null
+  },
+  {
+    "category": "data-structure",
+    "type": "ox",
+    "difficulty": 2,
+    "question": "그래프에서 DFS(깊이 우선 탐색)는 스택을, BFS(너비 우선 탐색)는 큐를 사용하여 구현할 수 있다.",
+    "options": null,
+    "answer": "true",
+    "explanation": "맞습니다. DFS는 한 경로를 끝까지 탐색 후 되돌아오므로 LIFO 특성의 스택을 사용하거나 재귀로 구현합니다. BFS는 가까운 노드부터 탐색하므로 FIFO 특성의 큐를 사용합니다. DFS는 경로 찾기, 사이클 탐지에, BFS는 최단 경로(가중치 없는 그래프), 레벨 순회에 활용됩니다.",
+    "tags": ["DFS", "BFS", "그래프탐색"],
+    "source": null
+  },
+  {
+    "category": "data-structure",
+    "type": "ox",
+    "difficulty": 2,
+    "question": "Set(집합) 자료구조는 중복을 허용하지 않으며, 해시 테이블로 구현하면 삽입, 삭제, 검색이 평균 O(1)이다.",
+    "options": null,
+    "answer": "true",
+    "explanation": "맞습니다. Set은 중복 없이 고유한 요소만 저장합니다. 해시 기반 Set(JavaScript Set, Python set, Java HashSet)은 내부적으로 해시 테이블을 사용하여 평균 O(1) 연산을 제공합니다. 트리 기반 Set(Java TreeSet)은 O(log n)이지만 정렬된 순서를 유지합니다. 중복 제거, 멤버십 테스트 등에 활용됩니다.",
+    "tags": ["Set", "해시테이블", "중복제거"],
+    "source": null
+  },
+  {
+    "category": "data-structure",
+    "type": "blank",
+    "difficulty": 2,
+    "question": "그래프에서 간선에 비용이나 거리 등의 값이 부여된 그래프를 _____ 그래프라고 한다.",
+    "options": null,
+    "answer": "가중치",
+    "explanation": "가중치 그래프(Weighted Graph)는 각 간선에 가중치(weight)가 있는 그래프입니다. 지도에서 도시 간 거리, 네트워크에서 대역폭, 비용 등을 표현할 수 있습니다. 최단 경로 알고리즘(다익스트라, 벨만-포드, 플로이드-워셜)은 가중치 그래프에서 동작합니다. 가중치가 없으면 BFS로 최단 경로를 찾을 수 있습니다.",
+    "tags": ["가중치그래프", "그래프", "간선"],
+    "source": null
+  }
+]
