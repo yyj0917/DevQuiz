@@ -37,14 +37,14 @@ export async function getMyStatsAction() {
     }
 
     // Get streak data
-    const { data: streak } = await supabase
+    const { data: streak } = (await supabase
       .from('user_streaks')
       .select('current_streak, longest_streak, total_quiz_days')
       .eq('user_id', user.id)
-      .single();
+      .single()) as any;
 
     // Get all quiz answers (daily + category quizzes)
-    const { data: answers } = await supabase
+    const { data: answers } = (await supabase
       .from('quiz_answers')
       .select(
         `
@@ -53,10 +53,10 @@ export async function getMyStatsAction() {
         category_quiz_attempts(user_id)
       `
       )
-      .or(`quiz_attempts.user_id.eq.${user.id},category_quiz_attempts.user_id.eq.${user.id}`);
+      .or(`quiz_attempts.user_id.eq.${user.id},category_quiz_attempts.user_id.eq.${user.id}`)) as any;
 
     const totalQuestions = answers?.length || 0;
-    const correctCount = answers?.filter((a) => a.is_correct).length || 0;
+    const correctCount = answers?.filter((a: any) => a.is_correct).length || 0;
     const accuracy = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
 
     // Get saved questions count
@@ -184,12 +184,12 @@ export async function toggleSaveQuestionAction(questionId: string) {
     }
 
     // Check if already saved
-    const { data: existing } = await supabase
+    const { data: existing } = (await supabase
       .from('saved_questions')
       .select('id')
       .eq('user_id', user.id)
       .eq('question_id', questionId)
-      .maybeSingle();
+      .maybeSingle()) as any;
 
     if (existing) {
       // Unsave (delete)
@@ -209,9 +209,10 @@ export async function toggleSaveQuestionAction(questionId: string) {
       const saveData: SavedQuestionInsert = {
         user_id: user.id,
         question_id: questionId,
+        memo: null,
       };
 
-      const { error: insertError } = await supabase
+      const { error: insertError } = await (supabase as any)
         .from('saved_questions')
         .insert(saveData);
 
@@ -244,7 +245,7 @@ export async function updateSavedMemoAction(savedId: string, memo: string) {
       return { success: false, error: '로그인이 필요합니다.' };
     }
 
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from('saved_questions')
       .update({ memo })
       .eq('id', savedId)
@@ -326,7 +327,7 @@ export async function resolveWrongNoteAction(wrongNoteId: string) {
       return { success: false, error: '로그인이 필요합니다.' };
     }
 
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from('wrong_notes')
       .update({
         is_reviewed: true,

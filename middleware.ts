@@ -43,11 +43,11 @@ export async function middleware(req: NextRequest) {
 
   // 4. 로그인 + 온보딩 미완료 + /quiz 접근 → /onboarding
   if (user && pathname.startsWith('/quiz')) {
-    const { data: profile } = await supabase
+    const { data: profile } = (await supabase
       .from('profiles')
       .select('is_onboarded')
       .eq('id', user.id)
-      .single();
+      .single()) as { data: { is_onboarded: boolean } | null };
 
     if (!profile?.is_onboarded) {
       const onboardingUrl = new URL('/onboarding', req.url);

@@ -21,11 +21,11 @@ export default async function MypageLayout({
   }
 
   // Get user profile
-  const { data: profile } = await supabase
+  const { data: profile } = (await supabase
     .from('profiles')
     .select('nickname, email, created_at')
     .eq('id', user.id)
-    .single();
+    .single()) as any;
 
   // Get stats
   const statsResult = await getMyStatsAction();

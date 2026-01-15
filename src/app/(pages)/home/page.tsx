@@ -28,11 +28,11 @@ export default async function HomePage() {
   }
 
   // 통계 데이터 조회
-  const { data: streak } = await supabase
+  const { data: streak } = (await supabase
     .from('user_streaks')
     .select('current_streak, total_quiz_days')
     .eq('user_id', user.id)
-    .single();
+    .single()) as { data: { current_streak: number; total_quiz_days: number } | null };
 
   // 총 푼 문제 수 계산 (quiz_answers에서)
   const { count: totalAnswers } = await supabase

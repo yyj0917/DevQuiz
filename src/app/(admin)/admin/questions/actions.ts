@@ -5,7 +5,8 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { isAdminEmail } from '@/lib/constants/admin';
 import { questionSchema } from '@/lib/validations/question';
-import type { QuestionInsert, QuestionUpdate } from '@/types/database';
+import type { Category, Question, QuestionInsert, QuestionUpdate } from '@/types/database';
+import { UUID } from 'crypto';
 
 /**
  * Check admin authorization
@@ -119,6 +120,7 @@ export async function getQuestionsAction(params: {
  * Get question by ID
  */
 export async function getQuestionByIdAction(id: string) {
+  const uuid = id as UUID
   try {
     const { supabase } = await checkAdminAuth();
 
@@ -130,18 +132,18 @@ export async function getQuestionByIdAction(id: string) {
         categories(id, name, slug, icon)
       `
       )
-      .eq('id', id)
+      .eq('id', uuid)
       .single();
 
     if (error) {
       console.error('Error fetching question:', error);
-      return { success: false, error: '문제를 찾을 수 없습니다.' };
+      return { success: false, question: null, error: '문제를 찾을 수 없습니다.' };
     }
 
-    return { success: true, question: data };
+    return { success: true, question: data as unknown as Question & { categories: Category }};
   } catch (error) {
     console.error('getQuestionByIdAction error:', error);
-    return { success: false, error: '권한이 없습니다.' };
+    return { success: false, question: null, error: '권한이 없습니다.' };
   }
 }
 
@@ -169,7 +171,7 @@ export async function createQuestionAction(data: QuestionFormInput) {
       is_active: validated.is_active,
     };
 
-    const { data: newQuestion, error } = await supabase
+    const { data: newQuestion, error } = await (supabase as any)
       .from('questions')
       .insert(questionData)
       .select()
@@ -216,7 +218,7 @@ export async function updateQuestionAction(id: string, data: QuestionFormInput) 
       updated_at: new Date().toISOString(),
     };
 
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from('questions')
       .update(questionData)
       .eq('id', id);
@@ -267,7 +269,7 @@ export async function toggleQuestionActiveAction(id: string, isActive: boolean) 
   try {
     const { supabase } = await checkAdminAuth();
 
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from('questions')
       .update({
         is_active: isActive,
@@ -317,7 +319,7 @@ export async function bulkToggleActiveAction(ids: string[], isActive: boolean) {
   try {
     const { supabase } = await checkAdminAuth();
 
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from('questions')
       .update({
         is_active: isActive,

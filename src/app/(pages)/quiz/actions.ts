@@ -26,12 +26,12 @@ export async function startDailyQuizAction() {
   const todayDate = getTodayDateKey();
 
   // 오늘자 진행 중/완료된 attempt 조회
-  const { data: existingAttempt } = await supabase
+  const { data: existingAttempt } = (await supabase
     .from('quiz_attempts')
     .select('id, is_completed, date')
     .eq('user_id', user.id)
     .eq('date', todayDate)
-    .maybeSingle();
+    .maybeSingle()) as any;
 
   // 이미 완료된 attempt가 있으면 해당 attempt 반환
   if (existingAttempt && existingAttempt.is_completed) {
@@ -44,14 +44,14 @@ export async function startDailyQuizAction() {
   // 기존 attempt가 있으면 재사용
   if (existingAttempt) {
     // 해당 attempt의 질문들 조회
-    const { data: answers } = await supabase
+    const { data: answers } = (await supabase
       .from('quiz_answers')
       .select('questions(*, categories(slug, name))')
       .eq('attempt_id', existingAttempt.id)
-      .order('answered_at', { ascending: true });
+      .order('answered_at', { ascending: true })) as any;
 
     if (answers && answers.length > 0) {
-      const questions = answers.map((a) => {
+      const questions = answers.map((a: any) => {
         const q = a.questions as any;
         const category = q.categories as { slug: string; name: string } | null;
         return {
@@ -80,7 +80,7 @@ export async function startDailyQuizAction() {
   const dailyQuiz = await generateTodayQuiz(user.id, supabase);
 
   // quiz_attempts 생성
-  const { data: attempt, error: attemptError } = await supabase
+  const { data: attempt, error: attemptError } = await (supabase as any)
     .from('quiz_attempts')
     .insert({
       user_id: user.id,
@@ -129,16 +129,16 @@ export async function submitAnswerAction({
   const validationResult = quizAnswerSchema.safeParse(payload);
 
   if (!validationResult.success) {
-    const firstError = validationResult.error.errors[0];
+    const firstError = (validationResult.error as any).errors[0];
     throw new QuizSubmissionError(firstError.message, 'VALIDATION_ERROR');
   }
 
   // attempt 소유권 확인
-  const { data: attempt, error: attemptError } = await supabase
+  const { data: attempt, error: attemptError } = (await supabase
     .from('quiz_attempts')
     .select('id, user_id, is_completed')
     .eq('id', attemptId)
-    .single();
+    .single()) as any;
 
   if (attemptError || !attempt) {
     throw new QuizSubmissionError('퀴즈 시도를 찾을 수 없습니다', 'ATTEMPT_NOT_FOUND');
