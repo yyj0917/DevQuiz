@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Source_Code_Pro } from 'next/font/google';
 import './globals.css';
+import { BottomNav } from '@/components/layout/bottom-nav';
 
 const sourceCodePro = Source_Code_Pro({
   subsets: ['latin'],
@@ -20,7 +21,10 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={`${sourceCodePro.variable} antialiased mobile-area border-l border-r`}>
-        {children}
+        <div className="pb-16">
+          {children}
+        </div>
+        <BottomNav />
       </body>
     </html>
   );

@@ -6,7 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { QuestionCard } from './question-card';
 import { AnswerModal } from './answer-modal';
-import { submitAnswerAction, completeQuizAction } from '@/app/quiz/actions';
+import { submitAnswerAction, completeQuizAction } from '@/app/(pages)/quiz/actions';
 import type { DailyQuizQuestion, QuizAnswerPayload, QuizSubmissionResult } from '@/types/quiz';
 
 type QuizClientProps = {

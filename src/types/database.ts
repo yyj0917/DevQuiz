@@ -77,11 +77,12 @@ export interface QuizAttempt {
 
 export interface QuizAnswer {
   id: string;
-  attempt_id: string;
+  attempt_id: string | null;
   question_id: string;
   user_answer: string;
   is_correct: boolean;
   answered_at: string;
+  category_attempt_id: string | null;
 }
 
 export interface WrongNote {
@@ -115,6 +116,25 @@ export interface QuestionReport {
   admin_note: string | null;
   created_at: string;
   resolved_at: string | null;
+}
+
+export interface SavedQuestion {
+  id: string;
+  user_id: string;
+  question_id: string;
+  memo: string | null;
+  created_at: string;
+}
+
+export interface CategoryQuizAttempt {
+  id: string;
+  user_id: string;
+  category_id: string | null;
+  mode: 'random' | 'wrong_only';
+  question_count: number;
+  correct_count: number;
+  completed_at: string | null;
+  created_at: string;
 }
 
 // ============================================================================
@@ -168,6 +188,17 @@ export type QuestionReportInsert = Omit<QuestionReport, 'id' | 'created_at'> & {
   created_at?: string;
 };
 
+export type SavedQuestionInsert = Omit<SavedQuestion, 'id' | 'created_at'> & {
+  id?: string;
+  created_at?: string;
+};
+
+export type CategoryQuizAttemptInsert = Omit<CategoryQuizAttempt, 'id' | 'created_at' | 'completed_at'> & {
+  id?: string;
+  created_at?: string;
+  completed_at?: string | null;
+};
+
 // ============================================================================
 // UPDATE TYPES (for updating existing records)
 // ============================================================================
@@ -189,6 +220,10 @@ export type WrongNoteUpdate = Partial<Omit<WrongNote, 'id' | 'user_id' | 'questi
 export type UserStreakUpdate = Partial<Omit<UserStreak, 'id' | 'user_id'>>;
 
 export type QuestionReportUpdate = Partial<Omit<QuestionReport, 'id' | 'question_id' | 'user_id' | 'created_at'>>;
+
+export type SavedQuestionUpdate = Partial<Omit<SavedQuestion, 'id' | 'user_id' | 'question_id' | 'created_at'>>;
+
+export type CategoryQuizAttemptUpdate = Partial<Omit<CategoryQuizAttempt, 'id' | 'user_id' | 'created_at'>>;
 
 // ============================================================================
 // COMBINED/JOINED TYPES
@@ -249,6 +284,23 @@ export interface CategoryStats {
   accuracy: number;
 }
 
+export interface SavedQuestionWithQuestion extends SavedQuestion {
+  questions: QuestionWithCategory;
+}
+
+export interface CategoryQuizAttemptWithAnswers extends CategoryQuizAttempt {
+  quiz_answers: QuizAnswerWithQuestion[];
+}
+
+export interface CategoryWithStats extends Category {
+  total_questions: number;
+  user_correct_count?: number;
+  user_total_count?: number;
+  user_solved_count?: number; // 고유 문제 수 (중복 제거)
+  accuracy?: number;
+  progress_percentage?: number; // 진행률 (0-100)
+}
+
 // ============================================================================
 // DATABASE SCHEMA TYPE (for Supabase client)
 // ============================================================================
@@ -300,6 +352,16 @@ export interface Database {
         Row: QuestionReport;
         Insert: QuestionReportInsert;
         Update: QuestionReportUpdate;
+      };
+      saved_questions: {
+        Row: SavedQuestion;
+        Insert: SavedQuestionInsert;
+        Update: SavedQuestionUpdate;
+      };
+      category_quiz_attempts: {
+        Row: CategoryQuizAttempt;
+        Insert: CategoryQuizAttemptInsert;
+        Update: CategoryQuizAttemptUpdate;
       };
     };
     Views: {
