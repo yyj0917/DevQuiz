@@ -26,7 +26,7 @@ export default async function CategoryQuizResultPage(props: ResultPageProps) {
   }
 
   // Get attempt data with answers and category
-  const { data: attempt, error: attemptError } = await supabase
+  const { data: attempt, error: attemptError } = (await supabase
     .from('category_quiz_attempts')
     .select(
       `
@@ -40,7 +40,7 @@ export default async function CategoryQuizResultPage(props: ResultPageProps) {
     )
     .eq('id', attemptId)
     .eq('user_id', user.id)
-    .single();
+    .single()) as any;
 
   if (attemptError || !attempt) {
     redirect('/quiz/category');
@@ -51,11 +51,8 @@ export default async function CategoryQuizResultPage(props: ResultPageProps) {
   const accuracy = totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0;
   const passed = accuracy >= 60;
 
-  // @ts-expect-error: Supabase join type
   const categoryName = attempt.categories?.name || '랜덤';
-  // @ts-expect-error: Supabase join type
   const categoryIcon = attempt.categories?.icon || '🎲';
-  // @ts-expect-error: Supabase join type
   const categorySlug = attempt.categories?.slug;
 
   return (

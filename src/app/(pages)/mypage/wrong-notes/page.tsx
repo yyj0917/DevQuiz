@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { getWrongNotesAction, resolveWrongNoteAction } from '../actions';
+import { LoadingSpinner } from '@/components/common/loading-spinner';
+import { ReportDialog } from '@/components/quiz/report-dialog';
 
 export default function WrongNotesPage() {
   const [wrongNotes, setWrongNotes] = useState<any[]>([]);
@@ -9,10 +11,8 @@ export default function WrongNotesPage() {
   const [filter, setFilter] = useState<'all' | 'unreviewed' | 'reviewed'>(
     'unreviewed'
   );
-
-  useEffect(() => {
-    loadWrongNotes();
-  }, [filter]);
+  const [reportDialogOpen, setReportDialogOpen] = useState(false);
+  
 
   const loadWrongNotes = async () => {
     setIsLoading(true);
@@ -29,6 +29,7 @@ export default function WrongNotesPage() {
 
     setIsLoading(false);
   };
+  
 
   const handleResolve = async (wrongNoteId: string) => {
     const result = await resolveWrongNoteAction(wrongNoteId);
@@ -44,11 +45,14 @@ export default function WrongNotesPage() {
       );
     }
   };
+  useEffect(() => {
+    loadWrongNotes();
+  }, [filter]);
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-        <div className="text-center text-gray-600">로딩 중...</div>
+      <div className="flex justify-center items-center h-full">
+        <LoadingSpinner />
       </div>
     );
   }
@@ -199,15 +203,22 @@ export default function WrongNotesPage() {
                     </p>
                   </div>
                 )}
-
+                <div className='flex gap-2'>
+                <button
+                  onClick={() => setReportDialogOpen(true)}
+                  className="flex-1 w-full py-2 px-4 bg-red-500 text-white rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  문제 신고
+                </button>
                 {!note.is_reviewed && (
                   <button
                     onClick={() => handleResolve(note.id)}
-                    className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex-2 w-full py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition-colors"
                   >
                     복습 완료
                   </button>
                 )}
+                </div>
               </div>
             );
           })}
@@ -219,6 +230,11 @@ export default function WrongNotesPage() {
           총 {wrongNotes.length}개의 오답이 있습니다
         </div>
       )}
+      <ReportDialog
+        questionId={wrongNotes.id }
+        open={reportDialogOpen}
+        onOpenChange={setReportDialogOpen}
+      />
     </div>
   );
 }

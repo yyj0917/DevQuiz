@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useTransition } from 'react';
+import { LoadingSpinner } from '../common/loading-spinner';
 
 interface QuestionsFilterProps {
   categories: Array<{
@@ -176,8 +177,8 @@ export default function QuestionsFilter({ categories }: QuestionsFilterProps) {
       </div>
 
       {isPending && (
-        <div className="mt-4 text-center text-sm text-gray-500">
-          로딩 중...
+        <div className="flex justify-center items-center h-screen">
+          <LoadingSpinner />
         </div>
       )}
     </div>

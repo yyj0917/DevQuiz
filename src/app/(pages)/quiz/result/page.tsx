@@ -33,11 +33,11 @@ export default async function ResultPage({ searchParams }: ResultPageProps) {
   }
 
   // Attempt 및 답변 조회
-  const { data: attempt } = await supabase
+  const { data: attempt } = (await supabase
     .from('quiz_attempts')
     .select('id, user_id, correct_count, total_questions, is_completed, date')
     .eq('id', attemptId)
-    .single();
+    .single()) as any;
 
   if (!attempt || attempt.user_id !== user.id) {
     redirect('/quiz');
@@ -48,29 +48,29 @@ export default async function ResultPage({ searchParams }: ResultPageProps) {
   }
 
   // 답변 및 문제 조회
-  const { data: answers } = await supabase
+  const { data: answers } = (await supabase
     .from('quiz_answers')
     .select('*, questions(*, categories(slug, name))')
     .eq('attempt_id', attemptId)
-    .order('answered_at', { ascending: true });
+    .order('answered_at', { ascending: true })) as any;
 
   if (!answers || answers.length === 0) {
     redirect('/quiz');
   }
 
   // 스트릭 조회
-  const { data: streak } = await supabase
+  const { data: streak } = (await supabase
     .from('user_streaks')
     .select('current_streak, longest_streak, total_quiz_days')
     .eq('user_id', user.id)
-    .single();
+    .single()) as any;
 
   const score = attempt.correct_count;
   const totalQuestions = attempt.total_questions;
   const accuracy = Math.round((score / totalQuestions) * 100);
   const currentStreak = streak?.current_streak || 0;
 
-  const questionsWithAnswers = answers.map((a) => {
+  const questionsWithAnswers = answers.map((a: any) => {
     const q = a.questions as any;
     const category = q.categories as { slug: string; name: string } | null;
     return {
@@ -87,7 +87,7 @@ export default async function ResultPage({ searchParams }: ResultPageProps) {
   });
 
   // 질문 번호 할당
-  questionsWithAnswers.forEach((q, index) => {
+  questionsWithAnswers.forEach((q: any, index: number) => {
     q.questionNumber = index + 1;
   });
 
@@ -133,7 +133,7 @@ export default async function ResultPage({ searchParams }: ResultPageProps) {
             <CardTitle className="text-xl">문제별 결과</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {questionsWithAnswers.map((item) => (
+            {questionsWithAnswers.map((item: any) => (
               <div
                 key={item.questionId}
                 className={cn(

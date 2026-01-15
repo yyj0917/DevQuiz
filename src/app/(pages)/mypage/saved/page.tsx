@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { getSavedQuestionsAction, toggleSaveQuestionAction } from '../actions';
+import { LoadingSpinner } from '@/components/common/loading-spinner';
 
 export default function SavedQuestionsPage() {
   const [savedQuestions, setSavedQuestions] = useState<any[]>([]);
@@ -35,8 +36,8 @@ export default function SavedQuestionsPage() {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-        <div className="text-center text-gray-600">로딩 중...</div>
+      <div className="flex justify-center items-center h-full">
+        <LoadingSpinner/>
       </div>
     );
   }

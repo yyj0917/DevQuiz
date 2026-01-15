@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { getHistoryAction } from '../actions';
 import type { HistoryFilters } from '../actions';
+import { LoadingSpinner } from '@/components/common/loading-spinner';
 
 export default function HistoryPage() {
   const [history, setHistory] = useState<any[]>([]);
@@ -37,8 +38,8 @@ export default function HistoryPage() {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-        <div className="text-center text-gray-600">로딩 중...</div>
+      <div className="flex justify-center items-center h-full">
+        <LoadingSpinner/>
       </div>
     );
   }

@@ -51,14 +51,16 @@ export default async function AdminDashboardPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="text-sm font-medium text-gray-600 mb-2">
-            신고 대기
+        <Link href="/admin/reports?status=pending">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer">
+            <div className="text-sm font-medium text-gray-600 mb-2">
+              신고 대기
+            </div>
+            <div className="text-3xl font-bold text-red-600">
+              {stats.pendingReports}
+            </div>
           </div>
-          <div className="text-3xl font-bold text-red-600">
-            {stats.pendingReports}
-          </div>
-        </div>
+        </Link>
       </div>
 
       {/* Category Stats */}
@@ -141,7 +143,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Link
           href="/admin/questions/new"
           className="bg-blue-600 text-white rounded-lg p-6 hover:bg-blue-700 transition-colors"
@@ -172,6 +174,17 @@ export default async function AdminDashboardPage() {
           <div className="font-semibold">카테고리 관리</div>
           <div className="text-sm text-purple-100 mt-1">
             카테고리 추가/수정
+          </div>
+        </Link>
+
+        <Link
+          href="/admin/reports"
+          className="bg-red-600 text-white rounded-lg p-6 hover:bg-red-700 transition-colors"
+        >
+          <div className="text-2xl mb-2">🚨</div>
+          <div className="font-semibold">신고 관리</div>
+          <div className="text-sm text-red-100 mt-1">
+            신고 검토 및 처리
           </div>
         </Link>
       </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -9,13 +10,15 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Trophy, AlertCircle } from 'lucide-react';
+import { Trophy, AlertCircle, AlertTriangle } from 'lucide-react';
+import { ReportDialog } from './report-dialog';
 import type { QuizSubmissionResult } from '@/types/quiz';
 
 type AnswerModalProps = {
   open: boolean;
   result: QuizSubmissionResult | null;
   isLastQuestion: boolean;
+  questionId: string;
   onNext: () => void;
   onViewResults: () => void;
 };
@@ -24,9 +27,12 @@ export function AnswerModal({
   open,
   result,
   isLastQuestion,
+  questionId,
   onNext,
   onViewResults,
 }: AnswerModalProps) {
+  const [reportDialogOpen, setReportDialogOpen] = useState(false);
+
   if (!result) return null;
 
   const isCorrect = result.isCorrect;
@@ -70,6 +76,18 @@ export function AnswerModal({
           )}
         </div>
 
+        <div className="flex justify-between items-center pt-2 pb-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-gray-600 hover:text-yellow-600"
+            onClick={() => setReportDialogOpen(true)}
+          >
+            <AlertTriangle className="h-4 w-4 mr-1" />
+            신고
+          </Button>
+        </div>
+
         <DialogFooter>
           {isLastQuestion ? (
             <Button
@@ -88,6 +106,12 @@ export function AnswerModal({
           )}
         </DialogFooter>
       </DialogContent>
+
+      <ReportDialog
+        questionId={questionId}
+        open={reportDialogOpen}
+        onOpenChange={setReportDialogOpen}
+      />
     </Dialog>
   );
 }

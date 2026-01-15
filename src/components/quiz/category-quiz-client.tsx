@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Question } from '@/types/database';
 import { submitCategoryAnswerAction, completeCategoryQuizAction } from '@/app/(pages)/quiz/category/actions';
@@ -15,6 +15,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { ReportDialog } from './report-dialog';
 
 interface CategoryQuizClientProps {
   attemptId: string;
@@ -35,11 +36,21 @@ export function CategoryQuizClient({
   const [isCorrect, setIsCorrect] = useState(false);
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [showAnswerOnly, setShowAnswerOnly] = useState(false);
-
+  const [reportDialogOpen, setReportDialogOpen] = useState(false);
   const currentQuestion = questions[currentIndex];
   console.log(currentQuestion);
   const isLastQuestion = currentIndex === questions.length - 1;
   const progress = ((currentIndex + 1) / questions.length) * 100;
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
+  useEffect(() => {
+    scrollToTop();
+  }, [currentIndex]);
 
   const handleAnswerSelect = (answer: string) => {
     console.log("answer : ", answer);
@@ -347,11 +358,19 @@ export function CategoryQuizClient({
                 </button>
               )}
               <button
+                onClick={() => setReportDialogOpen(true)}
+                className="px-4 py-4 bg-red-400 text-white font-semibold rounded-lg hover:bg-red-600 transition-colors whitespace-nowrap"
+              >
+                문제 오류
+              </button>
+              {/* <button
                 onClick={handleShowAnswer}
                 className="px-4 py-4 bg-[#1e3a8a] text-white font-semibold rounded-lg hover:bg-[#1e3a8a]/80 transition-colors whitespace-nowrap"
               >
                 정답 확인
-              </button>
+              </button> */}
+              
+              
               <button
                 onClick={handleSubmit}
                 disabled={!selectedAnswer || isSubmitting}
@@ -387,6 +406,12 @@ export function CategoryQuizClient({
                 </button>
               )}
               <button
+                onClick={() => setReportDialogOpen(true)}
+                className="px-4 py-4 bg-red-400 text-white font-semibold rounded-lg hover:bg-red-600 transition-colors whitespace-nowrap"
+              >
+                문제 오류
+              </button>
+              <button
                 onClick={handleNext}
                 className="flex-1 py-4 px-6 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors"
               >
@@ -421,7 +446,13 @@ export function CategoryQuizClient({
             </DialogFooter>
           </DialogContent>
         </Dialog>
+        <ReportDialog
+          questionId={currentQuestion.id}
+          open={reportDialogOpen}
+          onOpenChange={setReportDialogOpen}
+        />
       </div>
+      
     </div>
   );
 }

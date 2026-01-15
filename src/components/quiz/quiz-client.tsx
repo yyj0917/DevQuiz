@@ -120,6 +120,7 @@ export function QuizClient({ attemptId, questions }: QuizClientProps) {
           open={modalOpen}
           result={modalResult}
           isLastQuestion={isLastQuestion}
+          questionId={questions[currentIndex].id}
           onNext={handleNext}
           onViewResults={handleViewResults}
         />

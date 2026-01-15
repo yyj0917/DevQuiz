@@ -7,6 +7,8 @@ import { CategoryQuizClient } from '@/components/quiz/category-quiz-client';
 import { startCategoryQuizAction } from '../actions';
 import { getCategoryBySlug, getCategoryQuestionCount } from '@/lib/quiz/generate-category-quiz';
 import type { Question, Category } from '@/types/database';
+import { ChevronLeftIcon } from 'lucide-react';
+import { LoadingSpinner } from '@/components/common/loading-spinner';
 
 export default function CategoryQuizPage() {
   const params = useParams();
@@ -59,7 +61,7 @@ export default function CategoryQuizPage() {
   if (isLoading || !category) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-600">로딩 중...</div>
+        <LoadingSpinner/>
       </div>
     );
   }
@@ -80,7 +82,10 @@ export default function CategoryQuizPage() {
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Category Info */}
-        <div className="bg-white rounded-lg shadow-md p-8 mb-6">
+        <div className="relative bg-white rounded-lg shadow-md px-8 py-6 mb-4">
+          <button onClick={() => router.back()} className="absolute top-6 left-8 text-gray-500 hover:text-gray-900 transition-colors">
+            <ChevronLeftIcon className="size-8" />
+          </button>
           <div className="text-center mb-6">
             <div className="text-6xl mb-4">{category.icon || '📚'}</div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
@@ -108,14 +113,6 @@ export default function CategoryQuizPage() {
           </h2>
           <QuizModeSelector onStart={handleStart} isLoading={isLoading} />
         </div>
-
-        {/* Back Button */}
-        <button
-          onClick={() => router.back()}
-          className="mt-6 w-full py-3 text-gray-600 hover:text-gray-900 transition-colors"
-        >
-          ← 뒤로 가기
-        </button>
       </div>
     </div>
   );

@@ -114,7 +114,57 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
 }
+.spinner {
+  position: relative;
+  width: 33.6px;
+  height: 33.6px;
+  perspective: 67.2px;
+}
 
+.spinner div {
+  width: 100%;
+  height: 100%;
+  background: #1e3a8a;
+  position: absolute;
+  left: 50%;
+  transform-origin: left;
+  animation: spinner-16s03x 2s infinite;
+}
+
+.spinner div:nth-child(1) {
+  animation-delay: 0.15s;
+}
+
+.spinner div:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.spinner div:nth-child(3) {
+  animation-delay: 0.45s;
+}
+
+.spinner div:nth-child(4) {
+  animation-delay: 0.6s;
+}
+
+.spinner div:nth-child(5) {
+  animation-delay: 0.75s;
+}
+
+@keyframes spinner-16s03x {
+  0% {
+     transform: rotateY(0deg);
+  }
+
+  50%, 80% {
+     transform: rotateY(-180deg);
+  }
+
+  90%, 100% {
+     opacity: 0;
+     transform: rotateY(-180deg);
+  }
+}
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -123,6 +173,60 @@
     @apply bg-background text-foreground;
     font-family: var(--font-source-code-pro), system-ui, -apple-system,
       BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  
+  /* Custom Scrollbar Styles */
+  * {
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: #1e3a8a #f1f5f9;
+  }
+  
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  *::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+  }
+  
+  *::-webkit-scrollbar-thumb {
+    background: #1e3a8a;
+    border-radius: 4px;
+    border: 1px solid #f1f5f9;
+  }
+  
+  *::-webkit-scrollbar-thumb:hover {
+    background: #1e40af;
+  }
+  
+  *::-webkit-scrollbar-corner {
+    background: #f1f5f9;
+  }
+  
+  /* Dark mode scrollbar styles */
+  .dark * {
+    /* Firefox */
+    scrollbar-color: #1e3a8a #1e293b;
+  }
+  
+  .dark *::-webkit-scrollbar-track {
+    background: #1e293b;
+  }
+  
+  .dark *::-webkit-scrollbar-thumb {
+    background: #1e3a8a;
+    border-color: #1e293b;
+  }
+  
+  .dark *::-webkit-scrollbar-thumb:hover {
+    background: #1e40af;
+  }
+  
+  .dark *::-webkit-scrollbar-corner {
+    background: #1e293b;
   }
 }
 @layer components {

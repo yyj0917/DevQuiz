@@ -137,6 +137,19 @@ export interface CategoryQuizAttempt {
   created_at: string;
 }
 
+export interface QuestionReport {
+  id: string;
+  question_id: string;
+  user_id: string;
+  type: 'question_error' | 'option_error' | 'answer_mismatch' | 'explanation_error';
+  description: string | null;
+  status: 'pending' | 'reviewed' | 'resolved' | 'rejected';
+  admin_note: string | null;
+  resolved_at: string | null;
+  resolved_by: string | null;
+  created_at: string;
+}
+
 // ============================================================================
 // INSERT TYPES (for creating new records)
 // ============================================================================
