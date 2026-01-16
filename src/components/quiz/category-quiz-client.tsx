@@ -184,7 +184,7 @@ export function CategoryQuizClient({
             currentQuestion.options && (
               <div className="space-y-3">
                 {currentQuestion.options.map((option, index) => {
-                  const optionNumber = (index + 1).toString();
+                  const optionNumber = (index).toString();
                   const isSelected = selectedAnswer === optionNumber;
                   const showCorrect =
                     showResult && currentQuestion.answer === optionNumber;

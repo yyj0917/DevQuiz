@@ -8,9 +8,10 @@
     "start": "next start",
     "lint": "eslint",
     "gen:types": "pnpm dlx supabase gen types typescript --project-id YOUR_PROJECT_ID > src/types/database.types.ts",
-    "seed": "tsx scripts/seed-all.ts",
-    "seed:categories": "tsx scripts/seed-categories.ts",
-    "seed:questions": "tsx scripts/seed-questions.ts"
+    "seed": "tsx scripts/seed/index.ts",
+    "seed:categories": "tsx scripts/seed/index.ts --categories",
+    "seed:questions": "tsx scripts/seed/index.ts --questions",
+    "seed:help": "tsx scripts/seed/index.ts --help"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
