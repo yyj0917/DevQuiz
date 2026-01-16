@@ -3,9 +3,9 @@ import { createClient } from '@/lib/supabase/server';
 import { KakaoLoginButton } from '@/components/auth/kakao-login-button';
 
 type LoginPageProps = {
-  searchParams?: {
+  searchParams?: Promise<{
     error?: string;
-  };
+  }>;
 };
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
@@ -18,7 +18,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
     redirect('/quiz');
   }
 
-  const error = searchParams?.error;
+  const error = (await searchParams)?.error;
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center">

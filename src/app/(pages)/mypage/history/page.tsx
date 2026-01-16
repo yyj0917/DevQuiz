@@ -5,20 +5,20 @@ import { HistoryList } from '@/components/mypage/history-list';
 import { LoadingSpinner } from '@/components/common/loading-spinner';
 
 interface HistoryPageProps {
-  searchParams: {
+  searchParams: Promise<{
     result?: string;
     sortBy?: string;
     page?: string;
-  };
+  }>;
 }
 
 async function HistoryContent({ searchParams }: HistoryPageProps) {
   const filters: HistoryFilters = {
-    result: (searchParams.result as 'all' | 'correct' | 'wrong') || 'all',
-    sortBy: (searchParams.sortBy as 'newest' | 'oldest') || 'newest',
+    result: (await searchParams).result as 'all' | 'correct' | 'wrong' || 'all',
+    sortBy: (await searchParams).sortBy as 'newest' | 'oldest' || 'newest',
   };
   
-  const page = parseInt(searchParams.page || '1', 10);
+  const page = parseInt((await searchParams).page || '1', 10);
 
   const result = await getHistoryAction(filters, page);
 

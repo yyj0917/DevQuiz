@@ -4,16 +4,16 @@ import { WrongNotesList } from '@/components/mypage/wrong-notes-list';
 import { LoadingSpinner } from '@/components/common/loading-spinner';
 
 interface WrongNotesPageProps {
-  searchParams: {
+  searchParams: Promise<{
     filter?: string;
-  };
+  }>;
 }
 
 async function WrongNotesContent({ searchParams }: WrongNotesPageProps) {
   const filterParam =
-    searchParams.filter === 'all'
+    (await searchParams).filter === 'all'
       ? undefined
-      : searchParams.filter === 'reviewed'
+      : (await searchParams).filter === 'reviewed'
       ? { isReviewed: true }
       : { isReviewed: false };
 
@@ -29,7 +29,7 @@ async function WrongNotesContent({ searchParams }: WrongNotesPageProps) {
     );
   }
 
-  const initialFilter = (searchParams.filter as 'all' | 'unreviewed' | 'reviewed') || 'unreviewed';
+  const initialFilter = (await searchParams).filter as 'all' | 'unreviewed' | 'reviewed' || 'unreviewed';
 
   return (
     <div className="space-y-6">
