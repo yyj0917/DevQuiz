@@ -19,8 +19,10 @@ export function KakaoLoginButton({ isIconOnly = false }: KakaoLoginButtonProps) 
 
     try {
       const supabase = createClient();
+      // NEXT_PUBLIC_APP_URL이 설정되어 있으면 사용, 없으면 window.location.origin 사용
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL;
       const origin =
-        typeof window !== 'undefined' ? window.location.origin : '';
+        appUrl ?? (typeof window !== 'undefined' ? window.location.origin : '');
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'kakao',
