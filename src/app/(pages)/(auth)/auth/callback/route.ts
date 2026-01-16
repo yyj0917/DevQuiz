@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
   const error = url.searchParams.get('error');
 
   // NEXT_PUBLIC_APP_URL이 설정되어 있으면 사용, 없으면 request.url의 origin 사용
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || url.origin;
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
 
   if (error) {
     const redirectUrl = new URL('/login', baseUrl);
