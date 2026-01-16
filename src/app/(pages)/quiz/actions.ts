@@ -7,12 +7,20 @@ import { quizAnswerSchema } from '@/lib/validations/quiz';
 import { QuizGenerationError, QuizSubmissionError } from '@/lib/errors';
 import { getTodayDateKey } from '@/lib/quiz/utils';
 import { calculateStreak } from '@/lib/quiz/utils';
-import type { QuizAnswerPayload, QuizSubmissionResult, QuizResult } from '@/types/quiz';
+import type { QuizAnswerPayload, QuizSubmissionResult, QuizResult, DailyQuizQuestion } from '@/types/quiz';
+import type { QuizAttempt, Question, QuizAnswer, UserStreak } from '@/types/database';
+import type {
+  StartDailyQuizResult,
+  SubmitAnswerResult,
+  CompleteQuizResult,
+  SubmitReportResult,
+  GetUserReportsResult,
+} from '@/types/actions';
 
 /**
  * 데일리 퀴즈 시작 서버 액션
  */
-export async function startDailyQuizAction() {
+export async function startDailyQuizAction(): Promise<StartDailyQuizResult> {
   const supabase = await createClient();
 
   const {
@@ -26,12 +34,13 @@ export async function startDailyQuizAction() {
   const todayDate = getTodayDateKey();
 
   // 오늘자 진행 중/완료된 attempt 조회
-  const { data: existingAttempt } = (await supabase
+  type AttemptData = Pick<QuizAttempt, 'id' | 'is_completed' | 'date'>;
+  const { data: existingAttempt } = await supabase
     .from('quiz_attempts')
     .select('id, is_completed, date')
     .eq('user_id', user.id)
     .eq('date', todayDate)
-    .maybeSingle()) as any;
+    .maybeSingle() as { data: AttemptData | null };
 
   // 이미 완료된 attempt가 있으면 해당 attempt 반환
   if (existingAttempt && existingAttempt.is_completed) {
@@ -44,16 +53,22 @@ export async function startDailyQuizAction() {
   // 기존 attempt가 있으면 재사용
   if (existingAttempt) {
     // 해당 attempt의 질문들 조회
-    const { data: answers } = (await supabase
+    type AnswerWithQuestion = {
+      questions: Question & {
+        categories: { slug: string; name: string } | null;
+      };
+    };
+    
+    const { data: answers } = await supabase
       .from('quiz_answers')
       .select('questions(*, categories(slug, name))')
       .eq('attempt_id', existingAttempt.id)
-      .order('answered_at', { ascending: true })) as any;
+      .order('answered_at', { ascending: true }) as { data: AnswerWithQuestion[] | null };
 
     if (answers && answers.length > 0) {
-      const questions = answers.map((a: any) => {
-        const q = a.questions as any;
-        const category = q.categories as { slug: string; name: string } | null;
+      const questions: DailyQuizQuestion[] = answers.map((a) => {
+        const q = a.questions;
+        const category = q.categories;
         return {
           id: q.id,
           category: category?.name || 'Unknown',
@@ -80,8 +95,8 @@ export async function startDailyQuizAction() {
   const dailyQuiz = await generateTodayQuiz(user.id, supabase);
 
   // quiz_attempts 생성
-  const { data: attempt, error: attemptError } = await (supabase as any)
-    .from('quiz_attempts')
+  const { data: attempt, error: attemptError } = await ((supabase
+    .from('quiz_attempts') as any)
     .insert({
       user_id: user.id,
       date: todayDate,
@@ -90,7 +105,7 @@ export async function startDailyQuizAction() {
       is_completed: false,
     })
     .select()
-    .single();
+    .single()) as { data: QuizAttempt | null; error: unknown };
 
   if (attemptError || !attempt) {
     throw new QuizGenerationError('퀴즈 시작에 실패했습니다', 'ATTEMPT_CREATE_ERROR');
@@ -114,7 +129,7 @@ export async function submitAnswerAction({
   attemptId: string;
   questionId: string;
   payload: QuizAnswerPayload;
-}): Promise<QuizSubmissionResult> {
+}): Promise<SubmitAnswerResult> {
   const supabase = await createClient();
 
   const {
@@ -129,16 +144,17 @@ export async function submitAnswerAction({
   const validationResult = quizAnswerSchema.safeParse(payload);
 
   if (!validationResult.success) {
-    const firstError = (validationResult.error as any).errors[0];
+    const firstError = validationResult.error.issues[0];
     throw new QuizSubmissionError(firstError.message, 'VALIDATION_ERROR');
   }
 
   // attempt 소유권 확인
-  const { data: attempt, error: attemptError } = (await supabase
+  type AttemptCheck = Pick<QuizAttempt, 'id' | 'user_id' | 'is_completed'>;
+  const { data: attempt, error: attemptError } = await supabase
     .from('quiz_attempts')
     .select('id, user_id, is_completed')
     .eq('id', attemptId)
-    .single()) as any;
+    .single() as { data: AttemptCheck | null; error: unknown };
 
   if (attemptError || !attempt) {
     throw new QuizSubmissionError('퀴즈 시도를 찾을 수 없습니다', 'ATTEMPT_NOT_FOUND');
@@ -153,11 +169,11 @@ export async function submitAnswerAction({
   }
 
   // 문제 정보 조회
-  const { data: question, error: questionError } = (await supabase
+  const { data: question, error: questionError } = await supabase
     .from('questions')
     .select('*')
     .eq('id', questionId)
-    .single()) as any;
+    .single() as { data: Question | null; error: unknown };
 
   if (questionError || !question) {
     throw new QuizSubmissionError('문제를 찾을 수 없습니다', 'QUESTION_NOT_FOUND');
@@ -194,37 +210,38 @@ export async function submitAnswerAction({
   }
 
   // 기존 답변 확인
-  const { data: existingAnswer } = (await supabase
+  type AnswerId = Pick<QuizAnswer, 'id'>;
+  const { data: existingAnswer } = await supabase
     .from('quiz_answers')
     .select('id')
     .eq('attempt_id', attemptId)
     .eq('question_id', questionId)
-    .maybeSingle()) as any;
+    .maybeSingle() as { data: AnswerId | null };
 
   // 기존 답변이 있으면 업데이트, 없으면 삽입
   if (existingAnswer) {
-    const { error: answerError } = await (supabase as any)
-      .from('quiz_answers')
+    const { error: answerError } = await ((supabase
+      .from('quiz_answers') as any)
       .update({
         user_answer: userAnswerText,
         is_correct: isCorrect,
         answered_at: new Date().toISOString(),
       })
-      .eq('id', existingAnswer.id);
+      .eq('id', existingAnswer.id));
 
     if (answerError) {
       throw new QuizSubmissionError('답변 저장에 실패했습니다', 'ANSWER_SAVE_ERROR');
     }
-  } else {
-    const { error: answerError } = await (supabase as any)
-      .from('quiz_answers')
+    } else {
+    const { error: answerError } = await ((supabase
+      .from('quiz_answers') as any)
       .insert({
         attempt_id: attemptId,
         question_id: questionId,
         user_answer: userAnswerText,
         is_correct: isCorrect,
         answered_at: new Date().toISOString(),
-      });
+      }));
 
     if (answerError) {
       throw new QuizSubmissionError('답변 저장에 실패했습니다', 'ANSWER_SAVE_ERROR');
@@ -257,7 +274,7 @@ export async function completeQuizAction({
   attemptId,
 }: {
   attemptId: string;
-}): Promise<QuizResult> {
+}): Promise<CompleteQuizResult> {
   const supabase = await createClient();
 
   const {
@@ -269,11 +286,12 @@ export async function completeQuizAction({
   }
 
   // attempt 소유권 확인
-  const { data: attempt, error: attemptError } = (await supabase
+  type AttemptData = Pick<QuizAttempt, 'id' | 'user_id' | 'date' | 'is_completed' | 'total_questions'>;
+  const { data: attempt, error: attemptError } = await supabase
     .from('quiz_attempts')
     .select('id, user_id, date, is_completed, total_questions')
     .eq('id', attemptId)
-    .single()) as any;
+    .single() as { data: AttemptData | null; error: unknown };
 
   if (attemptError || !attempt) {
     throw new QuizSubmissionError('퀴즈 시도를 찾을 수 없습니다', 'ATTEMPT_NOT_FOUND');
@@ -285,20 +303,22 @@ export async function completeQuizAction({
 
   if (attempt.is_completed) {
     // 이미 완료된 경우 기존 결과 반환
-    const { data: answers } = (await supabase
+    type AnswerCheck = Pick<QuizAnswer, 'is_correct'>;
+    const { data: answers } = await supabase
       .from('quiz_answers')
       .select('is_correct')
-      .eq('attempt_id', attemptId)) as any;
+      .eq('attempt_id', attemptId) as { data: AnswerCheck[] | null };
 
-    const correctCount = answers?.filter((a: any) => a.is_correct).length || 0;
+    const correctCount = answers?.filter((a) => a.is_correct).length || 0;
     const score = correctCount;
 
     // 스트릭 조회
-    const { data: streak } = (await supabase
+    type StreakData = { current_streak: number };
+    const { data: streak } = await supabase
       .from('user_streaks')
       .select('current_streak')
       .eq('user_id', user.id)
-      .single()) as any;
+      .maybeSingle() as { data: StreakData | null };
 
     return {
       attemptId,
@@ -310,34 +330,35 @@ export async function completeQuizAction({
   }
 
   // 모든 답변 조회하여 점수 계산
-  const { data: answers, error: answersError } = (await supabase
+  type AnswerData = Pick<QuizAnswer, 'question_id' | 'is_correct'>;
+  const { data: answers, error: answersError } = await supabase
     .from('quiz_answers')
     .select('question_id, is_correct')
-    .eq('attempt_id', attemptId)) as any;
+    .eq('attempt_id', attemptId) as { data: AnswerData[] | null; error: unknown };
 
   if (answersError) {
     throw new QuizSubmissionError('답변 조회에 실패했습니다', 'ANSWERS_FETCH_ERROR');
   }
 
-  const correctCount = answers?.filter((a: any) => a.is_correct).length || 0;
+  const correctCount = answers?.filter((a) => a.is_correct).length || 0;
   const score = correctCount;
 
   // quiz_attempts 업데이트
-  const { error: updateError } = await (supabase as any)
-    .from('quiz_attempts')
+  const { error: updateError } = await ((supabase
+    .from('quiz_attempts') as any)
     .update({
       correct_count: correctCount,
       is_completed: true,
       completed_at: new Date().toISOString(),
     })
-    .eq('id', attemptId);
+    .eq('id', attemptId));
 
   if (updateError) {
     throw new QuizSubmissionError('퀴즈 완료 처리에 실패했습니다', 'COMPLETE_ERROR');
   }
 
   // 오답 노트 저장 (틀린 문제만)
-  const wrongQuestionIds = answers?.filter((a: any) => !a.is_correct).map((a: any) => a.question_id) || [];
+  const wrongQuestionIds = answers?.filter((a) => !a.is_correct).map((a) => a.question_id) || [];
 
   if (wrongQuestionIds.length > 0) {
     // 각 오답에 대해 wrong_notes 업데이트/삽입
@@ -358,27 +379,28 @@ export async function completeQuizAction({
       // upsert (UNIQUE 제약 조건으로 중복 방지)
       for (const note of wrongNotesToUpsert) {
         // 기존 노트 확인
-        const { data: existingNote } = (await supabase
+        type WrongNoteCount = { wrong_count: number };
+        const { data: existingNote } = await supabase
           .from('wrong_notes')
           .select('wrong_count')
           .eq('user_id', note.user_id)
           .eq('question_id', note.question_id)
-          .maybeSingle()) as any;
+          .maybeSingle() as { data: WrongNoteCount | null };
 
         if (existingNote) {
           // 기존 노트 업데이트 (wrong_count 증가)
-          await (supabase as any)
-            .from('wrong_notes')
+          await ((supabase
+            .from('wrong_notes') as any)
             .update({
               wrong_count: existingNote.wrong_count + 1,
               last_wrong_at: note.last_wrong_at,
               is_reviewed: false,
             })
             .eq('user_id', note.user_id)
-            .eq('question_id', note.question_id);
+            .eq('question_id', note.question_id));
         } else {
           // 새 노트 삽입
-          await (supabase as any).from('wrong_notes').insert(note);
+          await ((supabase.from('wrong_notes') as any).insert(note));
         }
       }
     }
@@ -386,11 +408,11 @@ export async function completeQuizAction({
 
   // 스트릭 업데이트
   const todayDate = attempt.date || getTodayDateKey();
-  const { data: existingStreak } = (await supabase
+  const { data: existingStreak } = await supabase
     .from('user_streaks')
     .select('*')
     .eq('user_id', user.id)
-    .single()) as any;
+    .maybeSingle() as { data: UserStreak | null };
 
   const { newStreak, shouldIncrement } = calculateStreak(
     existingStreak?.last_quiz_date || null,
@@ -420,8 +442,8 @@ export async function completeQuizAction({
 
     const newLongestStreak = Math.max(existingStreak?.longest_streak || 0, newCurrentStreak);
 
-    await (supabase as any)
-      .from('user_streaks')
+    await ((supabase
+      .from('user_streaks') as any)
       .upsert(
         {
           user_id: user.id,
@@ -434,7 +456,7 @@ export async function completeQuizAction({
         {
           onConflict: 'user_id',
         }
-      );
+      ));
 
     return {
       attemptId,
@@ -464,7 +486,7 @@ export async function submitReportAction(params: {
   questionId: string;
   type: 'question_error' | 'option_error' | 'answer_mismatch' | 'explanation_error';
   description: string | null;
-}) {
+}): Promise<SubmitReportResult> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -490,14 +512,14 @@ export async function submitReportAction(params: {
   }
 
   // 신고 생성
-  const { error } = await (supabase as any)
-    .from('question_reports')
+  const { error } = await ((supabase
+    .from('question_reports') as any)
     .insert({
       question_id: questionId,
       user_id: user.id,
       type,
       description,
-    });
+    }));
 
   if (error) {
     console.error('Report submission error:', error);
@@ -510,7 +532,7 @@ export async function submitReportAction(params: {
 /**
  * 사용자가 이미 신고한 유형 목록 조회
  */
-export async function getUserReportsForQuestionAction(questionId: string) {
+export async function getUserReportsForQuestionAction(questionId: string): Promise<GetUserReportsResult> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -518,11 +540,12 @@ export async function getUserReportsForQuestionAction(questionId: string) {
 
   if (!user) return [];
 
+  type ReportType = { type: 'question_error' | 'option_error' | 'answer_mismatch' | 'explanation_error' };
   const { data } = await supabase
     .from('question_reports')
     .select('type')
     .eq('question_id', questionId)
-    .eq('user_id', user.id);
+    .eq('user_id', user.id) as { data: ReportType[] | null };
 
-  return data?.map((r: any) => r.type) || [];
+  return data?.map((r) => r.type) || [];
 }

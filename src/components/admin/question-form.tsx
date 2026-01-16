@@ -16,7 +16,7 @@ interface QuestionFormProps {
   categories: Array<{
     id: string;
     name: string;
-    icon: string;
+    icon: string | null;
   }>;
   initialData?: QuestionFormInput & { id?: string };
 }

@@ -1,6 +1,7 @@
 import {
   getQuestionByIdAction,
   getCategoriesAction,
+  type QuestionFormInput,
 } from '../../actions';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -12,10 +13,10 @@ export default async function EditQuestionPage({
   params: Promise<{ id: string }>;
 }) {
   const uuid = (await params).id;
-  const [questionResult, categoriesResult] = (await Promise.all([
+  const [questionResult, categoriesResult] = await Promise.all([
     getQuestionByIdAction(uuid),
     getCategoriesAction(),
-  ])) as [any, any];
+  ]);
 
   if (!questionResult.success || !questionResult.question) {
     notFound();
@@ -33,7 +34,7 @@ export default async function EditQuestionPage({
   const categories = categoriesResult.categories || [];
 
   // Prepare initial data for form
-  const initialData = {
+  const initialData: QuestionFormInput & { id: string } = {
     id: question.id,
     category_id: question.category_id,
     type: question.type,
@@ -41,7 +42,7 @@ export default async function EditQuestionPage({
     question: question.question,
     options: question.options || undefined,
     answer: question.answer,
-    explanation: question.explanation,
+    explanation: question.explanation || null,
     code_snippet: question.code_snippet || undefined,
     tags: question.tags || [],
     source: question.source || undefined,

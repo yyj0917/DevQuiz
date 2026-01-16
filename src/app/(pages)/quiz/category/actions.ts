@@ -88,7 +88,7 @@ export async function startCategoryQuizAction(
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const categoryAttemptsQuery = supabase.from('category_quiz_attempts') as any;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const { data: attempt, error: attemptError } = await categoryAttemptsQuery
       .insert(attemptData)
       .select()
@@ -157,7 +157,7 @@ export async function submitCategoryAnswerAction(
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const quizAnswersQuery = supabase.from('quiz_answers') as any;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const { error: answerError } = await quizAnswersQuery.insert(answerData);
 
     if (answerError) {

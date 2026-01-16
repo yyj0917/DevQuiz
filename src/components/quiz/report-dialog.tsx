@@ -54,7 +54,7 @@ export function ReportDialog({
           setSelectedType(null);
           setDescription('');
           setError(null);
-        } else if (result.duplicate) {
+        } else if ('duplicate' in result && result.duplicate) {
           alert('이미 동일한 신고를 접수하셨습니다.');
           onOpenChange(false);
         }

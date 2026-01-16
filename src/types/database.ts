@@ -106,18 +106,6 @@ export interface UserStreak {
   updated_at: string;
 }
 
-export interface QuestionReport {
-  id: string;
-  question_id: string;
-  user_id: string;
-  type: 'wrong_answer' | 'typo' | 'unclear' | 'outdated' | 'other';
-  description: string | null;
-  status: 'pending' | 'resolved' | 'rejected';
-  admin_note: string | null;
-  created_at: string;
-  resolved_at: string | null;
-}
-
 export interface SavedQuestion {
   id: string;
   user_id: string;
@@ -247,7 +235,7 @@ export interface QuestionWithCategory extends Question {
 }
 
 export interface QuizAnswerWithQuestion extends QuizAnswer {
-  questions: Question;
+  questions: QuestionWithCategory;
 }
 
 export interface QuizAttemptWithAnswers extends QuizAttempt {

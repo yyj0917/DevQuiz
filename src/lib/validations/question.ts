@@ -4,17 +4,17 @@ export const questionSchema = z
   .object({
     category_id: z.string().uuid('유효한 카테고리를 선택해주세요'),
     type: z.enum(['multiple', 'ox', 'blank', 'code'], {
-      errorMap: () => ({ message: '유효한 문제 유형을 선택해주세요' }),
+      message: '유효한 문제 유형을 선택해주세요',
     }),
     difficulty: z.number().min(1).max(3),
     question: z.string().min(10, '문제는 최소 10자 이상이어야 합니다'),
     options: z.array(z.string()).length(4).nullable().optional(),
     answer: z.string().min(1, '정답을 입력해주세요'),
-    explanation: z.string().min(10, '해설은 최소 10자 이상이어야 합니다'),
+    explanation: z.string().min(10, '해설은 최소 10자 이상이어야 합니다').nullable(),
     code_snippet: z.string().nullable().optional(),
     tags: z.array(z.string()).optional(),
     source: z.string().nullable().optional(),
-    is_active: z.boolean().default(true),
+    is_active: z.boolean(),
   })
   .refine(
     (data) => {

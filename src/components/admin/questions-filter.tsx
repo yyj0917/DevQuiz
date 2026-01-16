@@ -8,7 +8,7 @@ interface QuestionsFilterProps {
   categories: Array<{
     id: string;
     name: string;
-    icon: string;
+    icon: string | null;
   }>;
 }
 

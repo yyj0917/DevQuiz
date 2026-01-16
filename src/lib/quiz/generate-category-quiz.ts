@@ -47,9 +47,12 @@ async function getWrongQuestions(
   }
 
   // Extract questions from wrong_notes
-  return (data || [])
-    .map((wn: any) => wn.questions)
-    .filter((q: any) => q !== null) as Question[];
+  type WrongNoteWithQuestion = {
+    questions: Question | null;
+  };
+  return ((data || []) as WrongNoteWithQuestion[])
+    .map((wn) => wn.questions)
+    .filter((q): q is Question => q !== null);
 }
 
 /**

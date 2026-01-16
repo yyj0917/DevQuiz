@@ -1,18 +1,23 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
-import type { SavedQuestionInsert } from '@/types/database';
-
-export interface MyStats {
-  totalQuestions: number;
-  correctCount: number;
-  accuracy: number;
-  currentStreak: number;
-  longestStreak: number;
-  totalQuizDays: number;
-  savedCount: number;
-  wrongNotesCount: number;
-}
+import type {
+  SavedQuestionInsert,
+  WrongNoteWithQuestion,
+  SavedQuestionWithQuestion,
+  QuizAnswerWithQuestion,
+} from '@/types/database';
+import type {
+  GetWrongNotesResult,
+  ResolveWrongNoteResult,
+  GetSavedQuestionsResult,
+  ToggleSaveQuestionResult,
+  UpdateSavedMemoResult,
+  GetHistoryResult,
+  GetMyStatsResult,
+  CheckQuestionSavedResult,
+  MyStats,
+} from '@/types/actions';
 
 export interface HistoryFilters {
   result?: 'all' | 'correct' | 'wrong';
@@ -23,7 +28,7 @@ export interface HistoryFilters {
 /**
  * Get user statistics for mypage dashboard
  */
-export async function getMyStatsAction() {
+export async function getMyStatsAction(): Promise<GetMyStatsResult> {
   try {
     const supabase = await createClient();
 
@@ -37,13 +42,24 @@ export async function getMyStatsAction() {
     }
 
     // Get streak data
-    const { data: streak } = (await supabase
+    type StreakData = {
+      current_streak: number;
+      longest_streak: number;
+      total_quiz_days: number;
+    };
+    const { data: streak } = await supabase
       .from('user_streaks')
       .select('current_streak, longest_streak, total_quiz_days')
       .eq('user_id', user.id)
-      .single()) as any;
+      .maybeSingle() as { data: StreakData | null };
 
     // Get all quiz answers (daily + category quizzes)
+    type AnswerWithAttempts = {
+      is_correct: boolean;
+      quiz_attempts?: { user_id: string }[];
+      category_quiz_attempts?: { user_id: string }[];
+    };
+
     const { data: answers } = (await supabase
       .from('quiz_answers')
       .select(
@@ -53,10 +69,12 @@ export async function getMyStatsAction() {
         category_quiz_attempts(user_id)
       `
       )
-      .or(`quiz_attempts.user_id.eq.${user.id},category_quiz_attempts.user_id.eq.${user.id}`)) as any;
+      .or(`quiz_attempts.user_id.eq.${user.id},category_quiz_attempts.user_id.eq.${user.id}`)) as {
+      data: AnswerWithAttempts[] | null;
+    };
 
     const totalQuestions = answers?.length || 0;
-    const correctCount = answers?.filter((a: any) => a.is_correct).length || 0;
+    const correctCount = answers?.filter((a) => a.is_correct).length || 0;
     const accuracy = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
 
     // Get saved questions count
@@ -97,7 +115,7 @@ export async function getHistoryAction(
   filters: HistoryFilters = {},
   page: number = 1,
   pageSize: number = 20
-) {
+): Promise<GetHistoryResult> {
   try {
     const supabase = await createClient();
 
@@ -156,7 +174,7 @@ export async function getHistoryAction(
 
     return {
       success: true,
-      history: data || [],
+      data: (data || []) as QuizAnswerWithQuestion[],
       total: count || 0,
       page,
       pageSize,
@@ -170,7 +188,9 @@ export async function getHistoryAction(
 /**
  * Toggle save/unsave a question (bookmark)
  */
-export async function toggleSaveQuestionAction(questionId: string) {
+export async function toggleSaveQuestionAction(
+  questionId: string
+): Promise<ToggleSaveQuestionResult> {
   try {
     const supabase = await createClient();
 
@@ -184,12 +204,13 @@ export async function toggleSaveQuestionAction(questionId: string) {
     }
 
     // Check if already saved
-    const { data: existing } = (await supabase
+    type SavedQuestionId = { id: string };
+    const { data: existing } = await supabase
       .from('saved_questions')
       .select('id')
       .eq('user_id', user.id)
       .eq('question_id', questionId)
-      .maybeSingle()) as any;
+      .maybeSingle() as { data: SavedQuestionId | null };
 
     if (existing) {
       // Unsave (delete)
@@ -212,9 +233,9 @@ export async function toggleSaveQuestionAction(questionId: string) {
         memo: null,
       };
 
-      const { error: insertError } = await (supabase as any)
-        .from('saved_questions')
-        .insert(saveData);
+      const { error: insertError } = await ((supabase
+        .from('saved_questions') as any)
+        .insert(saveData));
 
       if (insertError) {
         console.error('Error saving question:', insertError);
@@ -232,7 +253,10 @@ export async function toggleSaveQuestionAction(questionId: string) {
 /**
  * Update memo for a saved question
  */
-export async function updateSavedMemoAction(savedId: string, memo: string) {
+export async function updateSavedMemoAction(
+  savedId: string,
+  memo: string
+): Promise<UpdateSavedMemoResult> {
   try {
     const supabase = await createClient();
 
@@ -245,18 +269,18 @@ export async function updateSavedMemoAction(savedId: string, memo: string) {
       return { success: false, error: '로그인이 필요합니다.' };
     }
 
-    const { error } = await (supabase as any)
-      .from('saved_questions')
+    const { error } = await ((supabase
+      .from('saved_questions') as any)
       .update({ memo })
       .eq('id', savedId)
-      .eq('user_id', user.id);
+      .eq('user_id', user.id));
 
     if (error) {
       console.error('Error updating memo:', error);
       return { success: false, error: '메모 수정에 실패했습니다.' };
     }
 
-    return { success: true };
+    return { success: true, data: null };
   } catch (error) {
     console.error('updateSavedMemoAction error:', error);
     return { success: false, error: '메모 수정 중 오류가 발생했습니다.' };
@@ -266,7 +290,9 @@ export async function updateSavedMemoAction(savedId: string, memo: string) {
 /**
  * Get saved questions
  */
-export async function getSavedQuestionsAction(categoryId?: string) {
+export async function getSavedQuestionsAction(
+  categoryId?: string
+): Promise<GetSavedQuestionsResult> {
   try {
     const supabase = await createClient();
 
@@ -304,7 +330,10 @@ export async function getSavedQuestionsAction(categoryId?: string) {
       return { success: false, error: '저장한 문제를 가져오는데 실패했습니다.' };
     }
 
-    return { success: true, savedQuestions: data || [] };
+    return {
+      success: true,
+      savedQuestions: (data || []) as SavedQuestionWithQuestion[],
+    };
   } catch (error) {
     console.error('getSavedQuestionsAction error:', error);
     return { success: false, error: '저장한 문제를 가져오는데 실패했습니다.' };
@@ -314,7 +343,9 @@ export async function getSavedQuestionsAction(categoryId?: string) {
 /**
  * Mark wrong note as reviewed
  */
-export async function resolveWrongNoteAction(wrongNoteId: string) {
+export async function resolveWrongNoteAction(
+  wrongNoteId: string
+): Promise<ResolveWrongNoteResult> {
   try {
     const supabase = await createClient();
 
@@ -327,21 +358,21 @@ export async function resolveWrongNoteAction(wrongNoteId: string) {
       return { success: false, error: '로그인이 필요합니다.' };
     }
 
-    const { error } = await (supabase as any)
-      .from('wrong_notes')
+    const { error } = await ((supabase
+      .from('wrong_notes') as any)
       .update({
         is_reviewed: true,
         reviewed_at: new Date().toISOString(),
       })
       .eq('id', wrongNoteId)
-      .eq('user_id', user.id);
+      .eq('user_id', user.id));
 
     if (error) {
       console.error('Error resolving wrong note:', error);
       return { success: false, error: '복습 완료 처리에 실패했습니다.' };
     }
 
-    return { success: true };
+    return { success: true, data: null };
   } catch (error) {
     console.error('resolveWrongNoteAction error:', error);
     return { success: false, error: '복습 완료 처리 중 오류가 발생했습니다.' };
@@ -354,7 +385,7 @@ export async function resolveWrongNoteAction(wrongNoteId: string) {
 export async function getWrongNotesAction(filters?: {
   categoryId?: string;
   isReviewed?: boolean;
-}) {
+}): Promise<GetWrongNotesResult> {
   try {
     const supabase = await createClient();
 
@@ -396,7 +427,10 @@ export async function getWrongNotesAction(filters?: {
       return { success: false, error: '오답노트를 가져오는데 실패했습니다.' };
     }
 
-    return { success: true, wrongNotes: data || [] };
+    return {
+      success: true,
+      wrongNotes: (data || []) as WrongNoteWithQuestion[],
+    };
   } catch (error) {
     console.error('getWrongNotesAction error:', error);
     return { success: false, error: '오답노트를 가져오는데 실패했습니다.' };
@@ -406,7 +440,9 @@ export async function getWrongNotesAction(filters?: {
 /**
  * Check if a question is saved
  */
-export async function checkQuestionSavedAction(questionId: string) {
+export async function checkQuestionSavedAction(
+  questionId: string
+): Promise<CheckQuestionSavedResult> {
   try {
     const supabase = await createClient();
 

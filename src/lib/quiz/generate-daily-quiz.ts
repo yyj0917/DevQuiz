@@ -24,10 +24,14 @@ async function getUserCategories(
   userId: string,
   supabase: SupabaseClientType
 ): Promise<string[]> {
+  type UserCategoryWithCategory = {
+    categories: { id: string; slug: string } | null;
+  };
+  
   const { data: userCategories, error } = await supabase
     .from('user_categories')
     .select('categories(id, slug)')
-    .eq('user_id', userId);
+    .eq('user_id', userId) as { data: UserCategoryWithCategory[] | null; error: unknown };
 
   if (error) {
     throw new QuizGenerationError('유저 카테고리 조회 실패', 'CATEGORY_FETCH_ERROR');
@@ -40,7 +44,7 @@ async function getUserCategories(
   // 중첩된 카테고리 구조에서 category_id 추출
   const categoryIds = userCategories
     .map((uc) => {
-      const category = uc.categories as { id: string; slug: string } | null;
+      const category = uc.categories;
       return category?.id;
     })
     .filter((id): id is string => id !== undefined);
@@ -57,10 +61,11 @@ async function getAnsweredQuestionIds(
   supabase: SupabaseClientType
 ): Promise<string[]> {
   // 사용자의 모든 attempt 조회
+  type AttemptId = { id: string };
   const { data: attempts, error: attemptsError } = await supabase
     .from('quiz_attempts')
     .select('id')
-    .eq('user_id', userId);
+    .eq('user_id', userId) as { data: AttemptId[] | null; error: unknown };
 
   if (attemptsError || !attempts || attempts.length === 0) {
     return [];
@@ -69,11 +74,12 @@ async function getAnsweredQuestionIds(
   const attemptIds = attempts.map((a) => a.id);
 
   // 해당 attempt들의 모든 답변 조회
+  type AnswerQuestionId = { question_id: string };
   const { data: answers, error } = await supabase
     .from('quiz_answers')
     .select('question_id')
     .in('attempt_id', attemptIds)
-    .order('answered_at', { ascending: false });
+    .order('answered_at', { ascending: false }) as { data: AnswerQuestionId[] | null; error: unknown };
 
   if (error) {
     // 에러가 발생해도 빈 배열 반환 (문제 없음)
@@ -113,7 +119,20 @@ async function sampleQuestionsByDifficulty(
       }
     }
 
-  const { data: questions, error } = await query;
+  type QuestionWithCategory = {
+    id: string;
+    category_id: string;
+    difficulty: number;
+    type: string;
+    question: string;
+    code_snippet: string | null;
+    options: string[] | null;
+    answer: string;
+    explanation: string | null;
+    categories: { slug: string; name: string } | null;
+  };
+  
+  const { data: questions, error } = await query as { data: QuestionWithCategory[] | null; error: unknown };
 
   if (error) {
     throw new QuizGenerationError(
@@ -131,7 +150,7 @@ async function sampleQuestionsByDifficulty(
   const selected = shuffled.slice(0, count);
 
   return selected.map((q) => {
-    const category = q.categories as { slug: string; name: string } | null;
+    const category = q.categories;
     return {
       id: q.id,
       category: category?.name || 'Unknown',
@@ -160,24 +179,39 @@ export async function generateDailyQuiz({
   supabase,
 }: QuizGenerationOptions): Promise<DailyQuiz> {
   // 1) 기존 오늘 퀴즈 존재 여부 확인
+  type ExistingAttempt = { id: string; date: string };
   const { data: existingAttempt } = await supabase
     .from('quiz_attempts')
     .select('id, date')
     .eq('user_id', userId)
     .eq('date', quizDate)
-    .maybeSingle();
+    .maybeSingle() as { data: ExistingAttempt | null };
 
   if (existingAttempt) {
     // 기존 attempt가 있으면 해당 attempt의 질문들을 조회
+    type AnswerWithQuestion = {
+      questions: {
+        id: string;
+        category_id: string;
+        difficulty: number;
+        type: string;
+        question: string;
+        code_snippet: string | null;
+        options: string[] | null;
+        answer: string;
+        explanation: string | null;
+        categories: { slug: string; name: string } | null;
+      };
+    };
     const { data: answers } = await supabase
       .from('quiz_answers')
       .select('questions(*, categories(slug, name))')
-      .eq('attempt_id', existingAttempt.id);
+      .eq('attempt_id', existingAttempt.id) as { data: AnswerWithQuestion[] | null };
 
     if (answers && answers.length > 0) {
       const questions = answers.map((a) => {
-        const q = a.questions as any;
-        const category = q.categories as { slug: string; name: string } | null;
+        const q = a.questions;
+        const category = q.categories;
         return {
           id: q.id,
           category: category?.name || 'Unknown',
@@ -222,7 +256,7 @@ export async function generateDailyQuiz({
     const existingIds = allQuestions.map((q) => q.id);
     const allAnsweredIds = [...answeredQuestionIds, ...existingIds];
 
-    let fallbackQuery = supabase
+    const fallbackQuery = supabase
       .from('questions')
       .select('*, categories(slug, name)')
       .in('category_id', categoryIds)
@@ -232,13 +266,25 @@ export async function generateDailyQuiz({
     const { data: fallbackQuestionsRaw } = await fallbackQuery;
 
     // JavaScript에서 필터링 (ID 제외)
-    const fallbackQuestions = fallbackQuestionsRaw?.filter(
+    type FallbackQuestion = {
+      id: string;
+      category_id: string;
+      difficulty: number;
+      type: string;
+      question: string;
+      code_snippet: string | null;
+      options: string[] | null;
+      answer: string;
+      explanation: string | null;
+      categories: { slug: string; name: string } | null;
+    };
+    const fallbackQuestions = (fallbackQuestionsRaw as FallbackQuestion[] | null)?.filter(
       (q) => !allAnsweredIds.includes(q.id)
     ).slice(0, needed);
 
     if (fallbackQuestions && fallbackQuestions.length > 0) {
       const fallback = fallbackQuestions.map((q) => {
-        const category = q.categories as { slug: string; name: string } | null;
+        const category = q.categories;
         return {
           id: q.id,
           category: category?.name || 'Unknown',

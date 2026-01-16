@@ -6,6 +6,18 @@ import { redirect } from 'next/navigation';
 import { isAdminEmail } from '@/lib/constants/admin';
 import { questionSchema } from '@/lib/validations/question';
 import type { Category, Question, QuestionInsert, QuestionUpdate } from '@/types/database';
+import type {
+  GetQuestionsResult,
+  GetQuestionByIdResult,
+  CreateQuestionResult,
+  UpdateQuestionResult,
+  DeleteQuestionResult,
+  ToggleQuestionActiveResult,
+  BulkDeleteQuestionsResult,
+  BulkToggleActiveResult,
+  GetDashboardStatsResult,
+  GetCategoriesResult,
+} from '@/types/actions';
 import { UUID } from 'crypto';
 
 /**
@@ -37,7 +49,7 @@ export async function getQuestionsAction(params: {
   isActive?: boolean;
   search?: string;
   sortBy?: 'newest' | 'oldest' | 'most_attempted';
-}) {
+}): Promise<GetQuestionsResult> {
   try {
     const { supabase } = await checkAdminAuth();
 
@@ -103,9 +115,10 @@ export async function getQuestionsAction(params: {
       return { success: false, error: '문제를 가져오는데 실패했습니다.' };
     }
 
+    type QuestionWithCategory = Question & { categories: Category };
     return {
       success: true,
-      questions: data || [],
+      questions: (data || []) as QuestionWithCategory[],
       total: count || 0,
       page,
       totalPages: Math.ceil((count || 0) / limit),
@@ -119,7 +132,7 @@ export async function getQuestionsAction(params: {
 /**
  * Get question by ID
  */
-export async function getQuestionByIdAction(id: string) {
+export async function getQuestionByIdAction(id: string): Promise<GetQuestionByIdResult> {
   const uuid = id as UUID
   try {
     const { supabase } = await checkAdminAuth();
@@ -140,7 +153,8 @@ export async function getQuestionByIdAction(id: string) {
       return { success: false, question: null, error: '문제를 찾을 수 없습니다.' };
     }
 
-    return { success: true, question: data as unknown as Question & { categories: Category }};
+    type QuestionWithCategory = Question & { categories: Category };
+    return { success: true, question: data as QuestionWithCategory };
   } catch (error) {
     console.error('getQuestionByIdAction error:', error);
     return { success: false, question: null, error: '권한이 없습니다.' };
@@ -150,7 +164,7 @@ export async function getQuestionByIdAction(id: string) {
 /**
  * Create new question
  */
-export async function createQuestionAction(data: QuestionFormInput) {
+export async function createQuestionAction(data: QuestionFormInput): Promise<CreateQuestionResult> {
   try {
     const { supabase } = await checkAdminAuth();
 
@@ -171,24 +185,27 @@ export async function createQuestionAction(data: QuestionFormInput) {
       is_active: validated.is_active,
     };
 
-    const { data: newQuestion, error } = await (supabase as any)
+    const result = await (supabase
       .from('questions')
-      .insert(questionData)
+      .insert(questionData as any)
       .select()
-      .single();
+      .single()) as { data: Question | null; error: unknown };
+    
+    const { data: newQuestion, error } = result;
 
-    if (error) {
+    if (error || !newQuestion) {
       console.error('Error creating question:', error);
       return { success: false, error: '문제 생성에 실패했습니다.' };
     }
 
     revalidatePath('/admin/questions');
     return { success: true, question: newQuestion };
-  } catch (error: any) {
+  } catch (error) {
     console.error('createQuestionAction error:', error);
+    const errorMessage = error instanceof Error ? error.message : '문제 생성 중 오류가 발생했습니다.';
     return {
       success: false,
-      error: error.message || '문제 생성 중 오류가 발생했습니다.',
+      error: errorMessage,
     };
   }
 }
@@ -196,7 +213,10 @@ export async function createQuestionAction(data: QuestionFormInput) {
 /**
  * Update question
  */
-export async function updateQuestionAction(id: string, data: QuestionFormInput) {
+export async function updateQuestionAction(
+  id: string,
+  data: QuestionFormInput
+): Promise<UpdateQuestionResult> {
   try {
     const { supabase } = await checkAdminAuth();
 
@@ -218,10 +238,10 @@ export async function updateQuestionAction(id: string, data: QuestionFormInput) 
       updated_at: new Date().toISOString(),
     };
 
-    const { error } = await (supabase as any)
-      .from('questions')
+    const { error } = await ((supabase
+      .from('questions') as any)
       .update(questionData)
-      .eq('id', id);
+      .eq('id', id));
 
     if (error) {
       console.error('Error updating question:', error);
@@ -230,12 +250,13 @@ export async function updateQuestionAction(id: string, data: QuestionFormInput) 
 
     revalidatePath('/admin/questions');
     revalidatePath(`/admin/questions/${id}`);
-    return { success: true };
-  } catch (error: any) {
+    return { success: true, data: null };
+  } catch (error) {
     console.error('updateQuestionAction error:', error);
+    const errorMessage = error instanceof Error ? error.message : '문제 수정 중 오류가 발생했습니다.';
     return {
       success: false,
-      error: error.message || '문제 수정 중 오류가 발생했습니다.',
+      error: errorMessage,
     };
   }
 }
@@ -243,7 +264,7 @@ export async function updateQuestionAction(id: string, data: QuestionFormInput) 
 /**
  * Delete question
  */
-export async function deleteQuestionAction(id: string) {
+export async function deleteQuestionAction(id: string): Promise<DeleteQuestionResult> {
   try {
     const { supabase } = await checkAdminAuth();
 
@@ -255,7 +276,7 @@ export async function deleteQuestionAction(id: string) {
     }
 
     revalidatePath('/admin/questions');
-    return { success: true };
+    return { success: true, data: null };
   } catch (error) {
     console.error('deleteQuestionAction error:', error);
     return { success: false, error: '권한이 없습니다.' };
@@ -265,17 +286,20 @@ export async function deleteQuestionAction(id: string) {
 /**
  * Toggle question active status
  */
-export async function toggleQuestionActiveAction(id: string, isActive: boolean) {
+export async function toggleQuestionActiveAction(
+  id: string,
+  isActive: boolean
+): Promise<ToggleQuestionActiveResult> {
   try {
     const { supabase } = await checkAdminAuth();
 
-    const { error } = await (supabase as any)
-      .from('questions')
+    const { error } = await ((supabase
+      .from('questions') as any)
       .update({
         is_active: isActive,
         updated_at: new Date().toISOString(),
       })
-      .eq('id', id);
+      .eq('id', id));
 
     if (error) {
       console.error('Error toggling question:', error);
@@ -283,7 +307,7 @@ export async function toggleQuestionActiveAction(id: string, isActive: boolean) 
     }
 
     revalidatePath('/admin/questions');
-    return { success: true };
+    return { success: true, data: null };
   } catch (error) {
     console.error('toggleQuestionActiveAction error:', error);
     return { success: false, error: '권한이 없습니다.' };
@@ -293,7 +317,7 @@ export async function toggleQuestionActiveAction(id: string, isActive: boolean) 
 /**
  * Bulk delete questions
  */
-export async function bulkDeleteQuestionsAction(ids: string[]) {
+export async function bulkDeleteQuestionsAction(ids: string[]): Promise<BulkDeleteQuestionsResult> {
   try {
     const { supabase } = await checkAdminAuth();
 
@@ -315,17 +339,20 @@ export async function bulkDeleteQuestionsAction(ids: string[]) {
 /**
  * Bulk toggle active status
  */
-export async function bulkToggleActiveAction(ids: string[], isActive: boolean) {
+export async function bulkToggleActiveAction(
+  ids: string[],
+  isActive: boolean
+): Promise<BulkToggleActiveResult> {
   try {
     const { supabase } = await checkAdminAuth();
 
-    const { error } = await (supabase as any)
-      .from('questions')
+    const { error } = await ((supabase
+      .from('questions') as any)
       .update({
         is_active: isActive,
         updated_at: new Date().toISOString(),
       })
-      .in('id', ids);
+      .in('id', ids));
 
     if (error) {
       console.error('Error bulk toggling:', error);
@@ -343,7 +370,7 @@ export async function bulkToggleActiveAction(ids: string[], isActive: boolean) {
 /**
  * Get dashboard statistics
  */
-export async function getDashboardStatsAction() {
+export async function getDashboardStatsAction(): Promise<GetDashboardStatsResult> {
   try {
     const { supabase } = await checkAdminAuth();
 
@@ -375,14 +402,18 @@ export async function getDashboardStatsAction() {
       )
       .eq('is_active', true);
 
-    const categoryCounts = categoryStats?.reduce(
-      (acc, q: any) => {
+    type CategoryStat = {
+      category_id: string;
+      categories: { name: string } | null;
+    };
+    const categoryCounts = (categoryStats as CategoryStat[] | null)?.reduce(
+      (acc, q) => {
         const name = q.categories?.name || 'Unknown';
         acc[name] = (acc[name] || 0) + 1;
         return acc;
       },
       {} as Record<string, number>
-    );
+    ) || {};
 
     // Recent questions
     const { data: recentQuestions } = await supabase
@@ -398,6 +429,13 @@ export async function getDashboardStatsAction() {
       .order('created_at', { ascending: false })
       .limit(5);
 
+    type RecentQuestion = {
+      id: string;
+      question: string;
+      created_at: string;
+      categories: { name: string; icon: string | null } | null;
+    };
+
     return {
       success: true,
       stats: {
@@ -406,7 +444,7 @@ export async function getDashboardStatsAction() {
         inactiveQuestions: (totalQuestions || 0) - (activeQuestions || 0),
         pendingReports: pendingReports || 0,
         categoryCounts,
-        recentQuestions,
+        recentQuestions: (recentQuestions || []) as RecentQuestion[],
       },
     };
   } catch (error) {
@@ -418,7 +456,7 @@ export async function getDashboardStatsAction() {
 /**
  * Get all categories
  */
-export async function getCategoriesAction() {
+export async function getCategoriesAction(): Promise<GetCategoriesResult> {
   try {
     const { supabase } = await checkAdminAuth();
 
@@ -447,7 +485,7 @@ export interface QuestionFormInput {
   question: string;
   options?: string[] | null;
   answer: string;
-  explanation: string;
+  explanation: string | null;
   code_snippet?: string | null;
   tags?: string[];
   source?: string | null;

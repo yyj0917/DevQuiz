@@ -1,4 +1,4 @@
-import type { MyStats } from '@/app/(pages)/mypage/actions';
+import type { MyStats } from '@/types/actions';
 
 interface StatsOverviewProps {
   stats: MyStats;

@@ -50,7 +50,7 @@ export async function completeOnboardingAction(formData: FormData) {
   // 프로필 업데이트
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const profilesQuery = supabase.from('profiles') as any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const { error: profileError } = await profilesQuery
     .update({
       nickname: validatedNickname.trim(),
@@ -102,7 +102,7 @@ export async function completeOnboardingAction(formData: FormData) {
     })
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const { error: insertError } = await (supabase
     .from('user_categories')
     .insert(userCategoriesToInsert as any) as any);

@@ -50,17 +50,17 @@ export function useUser(): UseUserReturn {
         return;
       }
 
-      supabase
+      const query = supabase
         .from('profiles')
         .select('*')
         .eq('id', nextUser.id)
-        .single()
-        .then(({ data }) => {
-          setProfile(data ?? null);
-        })
-        .catch(() => {
-          setProfile(null);
-        });
+        .single();
+      
+      Promise.resolve(query).then(({ data }) => {
+        setProfile(data ?? null);
+      }).catch(() => {
+        setProfile(null);
+      });
     });
 
     return () => {
