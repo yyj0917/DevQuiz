@@ -17,23 +17,24 @@ type SearchParams = {
 export default async function QuestionsPage({
   searchParams,
 }: {
-  searchParams: SearchParams;
+  searchParams: Promise<SearchParams>;
 }) {
-  const page = parseInt(searchParams.page || '1');
-  const limit = parseInt(searchParams.limit || '20');
-  const categoryId = searchParams.categoryId;
-  const difficulty = searchParams.difficulty
-    ? parseInt(searchParams.difficulty)
+  const params = await searchParams;
+  const page = parseInt(params.page || '1');
+  const limit = parseInt(params.limit || '20');
+  const categoryId = params.categoryId;
+  const difficulty = params.difficulty
+    ? parseInt(params.difficulty)
     : undefined;
-  const type = searchParams.type;
+  const type = params.type;
   const isActive =
-    searchParams.isActive === 'true'
+    params.isActive === 'true'
       ? true
-      : searchParams.isActive === 'false'
+      : params.isActive === 'false'
         ? false
         : undefined;
-  const search = searchParams.search;
-  const sortBy = searchParams.sortBy || 'newest';
+  const search = params.search;
+  const sortBy = params.sortBy || 'newest';
 
   const [questionsResult, categoriesResult] = await Promise.all([
     getQuestionsAction({

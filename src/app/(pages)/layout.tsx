@@ -9,8 +9,29 @@ const sourceCodePro = Source_Code_Pro({
 });
 
 export const metadata: Metadata = {
-  title: 'DevDaily',
+  title: 'DevQuiz',
   description: '매일 5분, 개발 지식을 퀴즈로 복습하는 학습 플랫폼',
+  manifest: '/manifest.json',
+  themeColor: '#2563eb',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'DevQuiz',
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  icons: {
+    icon: '/icons/icons-192x192.png',
+    apple: '/icons/icons-192x192.png',
+  },
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    viewportFit: 'cover',
+  },
 };
 
 export default function RootLayout({
