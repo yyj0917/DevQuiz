@@ -4,9 +4,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const tabs = [
-  { name: '학습 히스토리', href: '/mypage/history' },
-  { name: '오답 노트', href: '/mypage/wrong-notes' },
-  { name: '저장한 문제', href: '/mypage/saved' },
+  { name: '내가 푼 문제', href: '/mypage/solved' },
+  { name: '내가 틀린 문제', href: '/mypage/wrong' },
 ];
 
 export function MypageTabs() {

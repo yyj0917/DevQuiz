@@ -53,7 +53,6 @@ export function CategoryQuizClient({
   }, [currentIndex]);
 
   const handleAnswerSelect = (answer: string) => {
-    console.log("answer : ", answer);
     if (!showResult) {
       setSelectedAnswer(answer as string);
     }

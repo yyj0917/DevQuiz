@@ -1,41 +1,31 @@
-import type { MyStats } from '@/types/actions';
+import type { MypageStats } from '@/types/mypage-stats';
+import { Progress } from '@/components/ui/progress';
 
 interface StatsOverviewProps {
-  stats: MyStats;
+  stats: MypageStats;
 }
 
 export function StatsOverview({ stats }: StatsOverviewProps) {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      {/* Total Questions */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <div className="text-sm text-gray-600 mb-1">총 푼 문제</div>
-        <div className="text-2xl font-bold text-gray-900">
-          {stats.totalQuestions}
+    <div className="space-y-4">
+      {/* Progress Bar */}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-medium text-gray-700">
+            학습 진행률
+          </span>
+          <span className="text-sm font-semibold text-blue-600">
+            {stats.progressPercentage}%
+          </span>
         </div>
-      </div>
-
-      {/* Accuracy */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <div className="text-sm text-gray-600 mb-1">정답률</div>
-        <div className="text-2xl font-bold text-blue-600">
-          {stats.accuracy}%
-        </div>
-      </div>
-
-      {/* Current Streak */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <div className="text-sm text-gray-600 mb-1">현재 스트릭</div>
-        <div className="text-2xl font-bold text-orange-600">
-          {stats.currentStreak}일
-        </div>
-      </div>
-
-      {/* Saved Count */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <div className="text-sm text-gray-600 mb-1">저장한 문제</div>
-        <div className="text-2xl font-bold text-purple-600">
-          {stats.savedCount}
+        <Progress value={stats.progressPercentage} className="h-3" />
+        <div className="flex items-center justify-between mt-2 text-sm text-gray-600">
+          <span>
+            총 푼 문제: <span className="font-semibold text-gray-900">{stats.solvedQuestions}</span>
+          </span>
+          <span>
+            총 문제: <span className="font-semibold text-gray-900">{stats.totalQuestions}</span>
+          </span>
         </div>
       </div>
     </div>

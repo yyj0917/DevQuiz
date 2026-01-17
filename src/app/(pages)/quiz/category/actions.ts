@@ -6,7 +6,6 @@ import type {
   Question,
   CategoryQuizAttemptInsert,
   QuizAnswerInsert,
-  Category,
 } from '@/types/database';
 
 export interface StartCategoryQuizResult {
@@ -269,6 +268,7 @@ export async function completeCategoryQuizAction(
 
 /**
  * Get all categories with stats
+ * Uses reusable function from lib/data/home-stats.ts
  */
 export async function getCategoriesWithStatsAction() {
   try {
@@ -279,93 +279,11 @@ export async function getCategoriesWithStatsAction() {
       data: { user },
     } = await supabase.auth.getUser();
 
-    // Get all active categories
-    const { data: categories, error: categoriesError } = await supabase
-      .from('categories')
-      .select('*')
-      .eq('is_active', true)
-      .order('order_index');
+    // Use reusable function with caching
+    const { getCategoriesWithStats } = await import('@/lib/data/home-stats');
+    const categories = await getCategoriesWithStats(user?.id);
 
-    if (categoriesError) {
-      console.error('Error fetching categories:', categoriesError);
-      return { success: false, error: '카테고리를 가져오는데 실패했습니다.' };
-    }
-
-    // Get question counts for each category
-    const categoriesWithStats = await Promise.all(
-      (categories || []).map(async (category) => {
-        // Count total questions
-        const { count: totalCount } = await supabase
-          .from('questions')
-          .select('id', { count: 'exact', head: true })
-          .eq('category_id', (category as { id: string }).id)
-          .eq('is_active', true);
-
-        let userStats = null;
-
-        if (user) {
-          // 사용자의 카테고리별 퀴즈 답변 조회
-          // 1. 사용자의 category_quiz_attempts 조회 (해당 카테고리)
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const categoryAttemptsQuery = supabase.from('category_quiz_attempts') as any;
-          const { data: userAttempts } = await categoryAttemptsQuery
-            .select('id')
-            .eq('user_id', user.id)
-            .eq('category_id', (category as { id: string }).id);
-
-          if (userAttempts && userAttempts.length > 0) {
-            const attemptIds = (userAttempts as Array<{ id: string }>).map((a) => a.id);
-
-            // 2. 해당 attempts의 quiz_answers 조회
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const quizAnswersQuery = supabase.from('quiz_answers') as any;
-            const { data: userAnswers } = await quizAnswersQuery
-              .select('question_id, is_correct')
-              .in('category_attempt_id', attemptIds);
-
-            if (userAnswers && Array.isArray(userAnswers)) {
-              // 고유 question_id 개수 계산 (중복 제거)
-              const uniqueQuestionIds = new Set(
-                (userAnswers as Array<{ question_id: string }>).map((a) => a.question_id)
-              );
-              const solvedCount = uniqueQuestionIds.size;
-
-              // 정답 수 계산
-              const correctCount = (userAnswers as Array<{ is_correct: boolean }>).filter(
-                (a) => a.is_correct === true
-              ).length;
-
-              // 총 답변 수 (중복 포함)
-              const totalAnswered = userAnswers.length;
-
-              // 진행률 계산
-              const totalQuestions = totalCount || 0;
-              const progressPercentage =
-                totalQuestions > 0 ? Math.round((solvedCount / totalQuestions) * 100) : 0;
-
-              if (solvedCount > 0 || totalAnswered > 0) {
-                userStats = {
-                  user_total_count: totalAnswered,
-                  user_correct_count: correctCount,
-                  user_solved_count: solvedCount,
-                  accuracy: totalAnswered > 0 ? Math.round((correctCount / totalAnswered) * 100) : 0,
-                  progress_percentage: progressPercentage,
-                };
-              }
-            }
-          }
-        }
-
-        const categoryObj = category as Category;
-        return {
-          ...categoryObj,
-          total_questions: totalCount || 0,
-          ...userStats,
-        };
-      })
-    );
-
-    return { success: true, categories: categoriesWithStats };
+    return { success: true, categories };
   } catch (error) {
     console.error('getCategoriesWithStatsAction error:', error);
     return { success: false, error: '카테고리 통계를 가져오는데 실패했습니다.' };

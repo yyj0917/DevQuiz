@@ -70,7 +70,7 @@ export function QuizModeSelector({ onStart, isLoading }: QuizModeSelectorProps) 
               key={c}
               type="button"
               onClick={() => setCount(c)}
-              className={`py-3 px-4 rounded-lg border-2 font-semibold transition-all ${
+              className={`py-3 px-4 text-sm rounded-lg border-2 font-semibold transition-all ${
                 count === c
                   ? 'border-blue-500 bg-blue-500 text-white'
                   : 'border-gray-200 hover:border-gray-300'
