@@ -12,11 +12,11 @@ import { z } from 'zod';
  * ]);
  * ```
  */
-export async function parallelFetch<T extends readonly unknown[]>(
-  requests: { [K in keyof T]: () => Promise<T[K]> }
-): Promise<T> {
-  return Promise.all(requests.map((request) => request())) as Promise<T>;
-}
+// export async function parallelFetch<T extends readonly unknown[]>(
+//   requests: { [K in keyof T]: () => Promise<T[K]> }
+// ): Promise<T> {
+//   return Promise.all(requests.map((request) => request())) as Promise<T>;
+// }
 
 /**
  * Parallel API fetch utility for fetching multiple API routes simultaneously
@@ -62,7 +62,7 @@ export async function parallelApiFetch(endpoints: string[]): Promise<unknown[]> 
  * ```
  */
 export async function parallelApiFetchWithTypes<
-  T extends readonly Array<{ url: string; validator?: z.ZodSchema }>
+  T extends Array<{ url: string; validator?: z.ZodSchema }>
 >(
   requests: T
 ): Promise<{

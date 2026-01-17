@@ -6,7 +6,6 @@ import type {
   SolvedQuestion,
 } from '@/types/mypage-stats';
 import type { QuestionWithCategory } from '@/types/database';
-import type { QuestionWithCategory } from '@/types/database';
 
 /**
  * GET /api/mypage/solved-questions

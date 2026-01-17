@@ -39,7 +39,7 @@ export async function GET() {
     const categoryAttemptIds = ((categoryAttempts || []) as Array<{ id: string }>).map((a) => a.id);
 
     // Get unique question IDs from quiz_answers
-    let uniqueQuestionIds = new Set<string>();
+    const uniqueQuestionIds = new Set<string>();
 
     if (dailyAttemptIds.length > 0) {
       const { data: dailyAnswers } = await supabase
@@ -48,7 +48,7 @@ export async function GET() {
         .in('attempt_id', dailyAttemptIds);
 
       (dailyAnswers || []).forEach((answer) => {
-        uniqueQuestionIds.add(answer.question_id);
+        uniqueQuestionIds.add((answer as { question_id: string }).question_id);
       });
     }
 
@@ -59,7 +59,7 @@ export async function GET() {
         .in('category_attempt_id', categoryAttemptIds);
 
       (categoryAnswers || []).forEach((answer) => {
-        uniqueQuestionIds.add(answer.question_id);
+        uniqueQuestionIds.add((answer as { question_id: string }).question_id);
       });
     }
 
