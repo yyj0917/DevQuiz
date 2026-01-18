@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { SolvedQuestionsList } from '@/components/mypage/solved-questions-list';
 import { LoadingSpinner } from '@/components/common/loading-spinner';
+import type { Category } from '@/types/database';
 
 interface SolvedPageProps {
   searchParams: Promise<{
@@ -32,6 +33,13 @@ async function SolvedContent({ searchParams }: SolvedPageProps) {
   const page = parseInt((await searchParams).page || '1', 10);
   const pageSize = 20;
 
+  // Get active categories
+  const { data: categories } = await supabase
+    .from('categories')
+    .select('id, name, slug, icon')
+    .eq('is_active', true)
+    .order('order_index');
+
   const result = await getSolvedQuestions(user.id, filters, page, pageSize);
 
   return (
@@ -42,6 +50,7 @@ async function SolvedContent({ searchParams }: SolvedPageProps) {
       pageSize={result.pageSize}
       totalPages={result.totalPages}
       initialFilters={filters}
+      categories={(categories || []) as Category[]}
     />
   );
 }

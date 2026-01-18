@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { SolvedQuestion, SolvedQuestionsFilters } from '@/types/mypage-stats';
+import type { Category } from '@/types/database';
 import { HistoryFilters } from './history-filters';
 
 interface SolvedQuestionsListProps {
@@ -11,6 +12,7 @@ interface SolvedQuestionsListProps {
   pageSize: number;
   totalPages: number;
   initialFilters: SolvedQuestionsFilters;
+  categories?: Category[];
 }
 
 export function SolvedQuestionsList({
@@ -20,6 +22,7 @@ export function SolvedQuestionsList({
   pageSize,
   totalPages,
   initialFilters,
+  categories,
 }: SolvedQuestionsListProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -53,6 +56,14 @@ export function SolvedQuestionsList({
     categoryId: searchParams.get('categoryId') || initialFilters.categoryId,
   };
 
+  const handleHistoryFilterChange = (key: string, value: string) => {
+    if (key === 'result') {
+      handleFilterChange('result', value);
+    } else if (key === 'categoryId') {
+      handleFilterChange('categoryId', value);
+    }
+  };
+
   if (initialQuestions.length === 0) {
     return (
       <>
@@ -60,12 +71,11 @@ export function SolvedQuestionsList({
           filters={{
             result: filters.result || 'all',
             sortBy: 'newest',
+            categoryId: filters.categoryId,
           }}
-          onFilterChange={(key, value) => {
-            if (key === 'result') {
-              handleFilterChange('result', value);
-            }
-          }}
+          onFilterChange={handleHistoryFilterChange}
+          categoryId={filters.categoryId}
+          categories={categories}
         />
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
           <div className="text-center text-gray-600">푼 문제가 없습니다.</div>
@@ -80,12 +90,11 @@ export function SolvedQuestionsList({
         filters={{
           result: filters.result || 'all',
           sortBy: 'newest',
+          categoryId: filters.categoryId,
         }}
-        onFilterChange={(key, value) => {
-          if (key === 'result') {
-            handleFilterChange('result', value);
-          }
-        }}
+        onFilterChange={handleHistoryFilterChange}
+        categoryId={filters.categoryId}
+        categories={categories}
       />
 
       <div className="space-y-4">
