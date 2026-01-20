@@ -111,11 +111,6 @@ export function CategoryQuizClient({
     }
   };
 
-  const handleShowAnswer = () => {
-    setShowResult(true);
-    setShowAnswerOnly(true);
-    setIsCorrect(false);
-  };
 
   const handleExit = () => {
     setShowExitDialog(true);
