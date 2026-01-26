@@ -14,6 +14,11 @@ export type Json =
 // TABLE ROW TYPES
 // ============================================================================
 
+/**
+ * Question status type
+ */
+export type QuestionStatus = 'pending' | 'approved' | 'rejected';
+
 export interface Category {
   id: string;
   name: string;
@@ -42,6 +47,9 @@ export interface Question {
     attempts: number;
     correct: number;
   };
+  created_by: string | null; // 제작자 ID (null이면 시스템 문제)
+  is_user_created: boolean; // 유저가 생성한 문제 여부
+  status: 'pending' | 'approved' | 'rejected'; // 승인 상태
   created_at: string;
   updated_at: string;
 }
@@ -232,6 +240,18 @@ export type CategoryQuizAttemptUpdate = Partial<Omit<CategoryQuizAttempt, 'id' |
 
 export interface QuestionWithCategory extends Question {
   categories: Category;
+}
+
+/**
+ * Question with creator information (for user-created questions)
+ */
+export interface QuestionWithCreator extends Question {
+  categories: Category;
+  creator?: {
+    id: string;
+    nickname: string;
+    avatar_url: string | null;
+  } | null;
 }
 
 export interface QuizAnswerWithQuestion extends QuizAnswer {

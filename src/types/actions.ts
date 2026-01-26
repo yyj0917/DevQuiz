@@ -264,3 +264,31 @@ export type GetReportStatsResult = {
   error: string;
 };
 
+/**
+ * User quiz creation action return types
+ */
+import type { QuestionWithCreator } from './database';
+
+export type CreateUserQuestionResult = {
+  success: true;
+  question: QuestionWithCreator;
+} | {
+  success: false;
+  error: string;
+};
+
+export type GetUserQuestionsResult = {
+  success: true;
+  questions: QuestionWithCreator[];
+  total: number;
+  page: number;
+  totalPages: number;
+} | {
+  success: false;
+  error: string;
+};
+
+export type UpdateUserQuestionResult = ActionResult<null>;
+
+export type DeleteUserQuestionResult = ActionResult<null>;
+

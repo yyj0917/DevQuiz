@@ -183,6 +183,9 @@ export async function createQuestionAction(data: QuestionFormInput): Promise<Cre
       tags: validated.tags || [],
       source: validated.source || null,
       is_active: validated.is_active,
+      status: 'approved', // Admin-created questions are auto-approved
+      created_by: null, // System/admin created, not user-created
+      is_user_created: false, // Not user-created
     };
 
     const result = await (supabase

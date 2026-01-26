@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Home, BarChart3, MessageCircle, User } from 'lucide-react';
+import { Home, BarChart3, MessageCircle, User, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
@@ -17,9 +17,9 @@ const navItems = [
     href: '/stats',
   },
   {
-    label: '퀴즈문의',
-    icon: MessageCircle,
-    href: '/quiz/inquiry',
+    label: '퀴즈 만들기',
+    icon: Plus,
+    href: '/create-quiz',
   },
   {
     label: '마이페이지',
